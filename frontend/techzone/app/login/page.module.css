@@ -1,0 +1,64 @@
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    color: black;
+}
+
+.loginWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+.loginContenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 1px solid black;
+    background-color: white;
+    border-radius: 8px;
+}
+
+
+  
+.formulario {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    color: black;
+}
+
+.titulo {
+    font-size: 40px;
+    color: black;
+}
+
+.boton1 {
+    margin-top: 20px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 20px;
+    background-color: #f0c812;
+    border-color: black;
+}
+
+.boton2 {
+    margin-top: 20px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 2px solid black;
+    border-radius: 20px;
+    background-color: #f0c812;
+}
