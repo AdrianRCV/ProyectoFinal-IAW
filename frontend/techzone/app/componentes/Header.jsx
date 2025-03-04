@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import styles from "./Header.module.css";
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -11,11 +12,21 @@ export default function Header() {
 
   return (
     <header className={styles.header}>
-      <div className={styles.logo}>Mi Sitio</div>
+      <div className={styles.logo}>
+        <Image
+          src="/logo.png"
+          alt="Mi Logo"
+          width={100}
+          height={50}
+        />
+      </div> {/* <-- Cierre correcto del div */}
+      
       <nav>
         <ul className={styles.navList}>
           <li className={styles.dropdown}>
-            <button onClick={toggleDropdown} className={styles.dropdownButton}>Productos</button>
+            <button onClick={toggleDropdown} className={styles.dropdownButton}>
+              Productos
+            </button>
             {isDropdownOpen && (
               <ul>
                 <li><Link href="/productos/xiaomi">Xiaomi</Link></li>
