@@ -1,16 +1,20 @@
-"use client"
-import { useEffect } from "react"
+"use client";  
 
-export default function Error({ error, reset }) {
-     useEffect(() => {
-         console.error(error)
-     },[error])
+import { useRouter } from "next/navigation";  
+
+export default function NotFound() {
+    const router = useRouter();
+
+    const handleRedirect = () => {
+        router.push("/");  
+    };
 
     return (
-        <div>
-            <h2>pagina de error!</h2>
-            <button onClick={reset}>
-                 Try again
+        <div style={{ textAlign: "center", padding: "50px" }}>
+            <h2>Página no encontrada</h2>
+            <p>La ruta que has intentado acceder no existe.</p>
+            <button onClick={handleRedirect} style={{ padding: "10px 10px", cursor: "pointer", marginTop: "10px" }}>
+                Regresar al inicio
             </button>
         </div>
     );
