@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -22,32 +22,34 @@ const Login = () => {
       setMessage("Login exitoso. Redirigiendo...");
       setTimeout(() => {
         router.push("/");
-      }, 2000);
+      }, 1000);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Error en el login.");
+      if (error.response) {
+        setMessage(error.response?.data?.message || "Error en el login");
+      } else if (error.request) {
+        setMessage("Error de red o el servidor no responde.");
+      } else {
+        setMessage("Error inesperado: " + error.message);
+      }
     }
-  };
-
-  const handleRedirect = () => {
-    router.push("/register");
   };
 
   return (
     <div className={styles.main}>
       <div className={styles.registerWrapper}>
         <div className={styles.registerContenedor}>
-          <p className={styles.titulo}>Iniciar Sesión</p>
+          <p className={styles.titulo}>Iniciar Sesión</p>
           <input
             className={styles.formulario}
             type="email"
             placeholder="Correo"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <input
             className={styles.formulario}
             type="password"
-            placeholder="Contraseña"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -61,5 +63,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login;
+
+
 
