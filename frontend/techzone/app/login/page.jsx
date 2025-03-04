@@ -45,20 +45,9 @@ const Login = () => {
       <div className={styles.loginWrapper}>
       <div className={styles.loginContenedor}>
       <p className={styles.titulo}>Iniciar sesión</p>
-      <input
-        className={styles.formulario}
-        type="text"
-        placeholder="Usuario"
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        className={styles.formulario}
-        type="password"
-        placeholder="Contraseña"
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      <input className={styles.formulario} type="text" placeholder="Usuario" onChange={(e) => setUsername(e.target.value)}/>
+      <input className={styles.formulario} type="password" placeholder="Contraseña" onChange={(e) => setPassword(e.target.value)}/>
       <button className={styles.boton1} onClick={handleLogin}>Continuar</button>
-
       {message && <div>{message}</div>}
       </div>
       <button className={styles.boton2} onClick={handleRedirect}>Crear cuenta</button>
