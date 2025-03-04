@@ -6,6 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './usuarios/entities/usuarios.entity';
+import { ClienteModule } from './cliente/cliente.module';
+import { PedidoModule } from './pedido/pedido.module';
+import { ProveedoresModule } from './proveedores/proveedores.module';
+import { ProyectoModule } from './proyecto/proyecto.module';
 
 @Module({
   imports: [ConfigModule.forRoot({isGlobal: true,}),
@@ -14,7 +18,7 @@ import { User } from './usuarios/entities/usuarios.entity';
       type:'mysql',
       host:process.env.URL,
       port:3306,
-      username: 'root',
+      username: 'luis',
       password:process.env.PASSWORD,
       database: process.env.DBNAME,
       entities: [User],
@@ -22,6 +26,10 @@ import { User } from './usuarios/entities/usuarios.entity';
     }),
     AuthModule,
     UsuariosModule,
+    ClienteModule,
+    PedidoModule,
+    ProyectoModule,
+    ProveedoresModule,
   ],
   controllers: [AppController],
   providers: [AppService],
