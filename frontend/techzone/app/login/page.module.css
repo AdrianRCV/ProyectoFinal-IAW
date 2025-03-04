@@ -7,13 +7,13 @@
     color: black;
 }
 
-.registerWrapper {
+.loginWrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
   
-.registerContenedor {
+.loginContenedor {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -58,8 +58,7 @@
     padding-bottom: 7px;
     padding-left: 10px;
     padding-right: 10px;
-    border: 2px solid #ccc;
+    border: 2px solid black;
     border-radius: 20px;
     background-color: #f0c812;
-    border-color: black;
 }
