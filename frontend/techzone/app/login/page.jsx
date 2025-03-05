@@ -38,7 +38,7 @@ const Login = () => {
     <div className={styles.main}>
       <div className={styles.registerWrapper}>
         <div className={styles.registerContenedor}>
-          <p className={styles.titulo}>Iniciar Sesión</p>
+          <p className={styles.titulo}>Iniciar Sesión</p>
           <input
             className={styles.formulario}
             type="text"
@@ -49,7 +49,7 @@ const Login = () => {
           <input
             className={styles.formulario}
             type="password"
-            placeholder="Contraseña"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -63,5 +63,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login;
+
+
 

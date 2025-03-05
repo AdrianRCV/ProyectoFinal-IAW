@@ -21,7 +21,7 @@ import { Pedido } from './pedido/entities/pedido.entity';
       type:'mysql',
       host:process.env.URL,
       port:3306,
-      username: 'root',
+      username: 'raul',
       password:process.env.PASSWORD,
       database: process.env.DBNAME,
       entities: [User,Cliente,Pedido],
