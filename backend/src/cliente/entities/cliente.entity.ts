@@ -17,9 +17,18 @@ export class Cliente {
   @Column({ type: 'varchar', length: 100 })
   direccion: string;
 
-  @Column({ unique: true, type: 'varchar', length: 100, name: 'correo_electronico' })
+  @Column({
+    unique: true,
+    type: 'varchar',
+    length: 100,
+    name: 'correo_electronico',
+  })
   correoElectronico: string;
 
-  @Column({ type: 'timestamp', name: 'fecha_registro', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'timestamp',
+    name: 'fecha_registro',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   fechaRegistro: Date;
 }

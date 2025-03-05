@@ -12,17 +12,18 @@ import { ProveedoresModule } from './proveedores/proveedores.module';
 import { ProyectoModule } from './proyecto/proyecto.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({isGlobal: true,}),
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
-      name:'base1',
-      type:'mysql',
-      host:process.env.URL,
-      port:3306,
+      name: 'base1',
+      type: 'mysql',
+      host: process.env.URL,
+      port: 3306,
       username: 'luis',
-      password:process.env.PASSWORD,
+      password: process.env.PASSWORD,
       database: process.env.DBNAME,
       entities: [User],
-      synchronize:true  /*Solo en desarrollo*/
+      synchronize: true /*Solo en desarrollo*/,
     }),
     AuthModule,
     UsuariosModule,

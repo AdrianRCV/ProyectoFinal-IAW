@@ -1,9 +1,9 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateClienteDto {
-//   @IsNotEmpty({ message: 'El id_cliente no puede estar vacío' }) // este valor no puede ser NULL
-//   @IsNumber({}, { message: 'El id del cliente debe ser un número' }) // nos aseguramos que sea un número
-//   idcliente: number;
+  //   @IsNotEmpty({ message: 'El id_cliente no puede estar vacío' }) // este valor no puede ser NULL
+  //   @IsNumber({}, { message: 'El id del cliente debe ser un número' }) // nos aseguramos que sea un número
+  //   idcliente: number;
 
   @IsNotEmpty({ message: 'El teléfono no puede estar vacío' })
   @IsString({ message: 'El teléfono debe ser una cadena de texto' })

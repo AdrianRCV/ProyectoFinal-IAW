@@ -1,5 +1,11 @@
-import { Cliente } from "src/cliente/entities/cliente.entity";
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Cliente } from 'src/cliente/entities/cliente.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity({ name: 'pedido' })
 export class Pedido {
@@ -13,6 +19,10 @@ export class Pedido {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   total: number;
 
-  @Column({ type: 'timestamp', name: 'fecha_pedido', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'timestamp',
+    name: 'fecha_pedido',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   fechaPedido: Date;
 }
