@@ -18,7 +18,7 @@ import { ProyectoModule } from './proyecto/proyecto.module';
       type:'mysql',
       host:process.env.URL,
       port:3306,
-      username: 'luis',
+      username: 'root',
       password:process.env.PASSWORD,
       database: process.env.DBNAME,
       entities: [User],
