@@ -15,12 +15,21 @@ import { ProyectoModule } from './proyecto/proyecto.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
+<<<<<<< HEAD
       name: 'base1',
       type: 'mysql',
       host: process.env.URL,
       port: 3306,
       username: 'luis',
       password: process.env.PASSWORD,
+=======
+      name:'base1',
+      type:'mysql',
+      host:process.env.URL,
+      port:3306,
+      username: 'root',
+      password:process.env.PASSWORD,
+>>>>>>> 3b30fcd20d09600c399ffcf54c253ed07c6b7a60
       database: process.env.DBNAME,
       entities: [User],
       synchronize: true /*Solo en desarrollo*/,
