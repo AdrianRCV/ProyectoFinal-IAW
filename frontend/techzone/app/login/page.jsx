@@ -41,8 +41,8 @@ const Login = () => {
           <p className={styles.titulo}>Iniciar Sesión</p>
           <input
             className={styles.formulario}
-            type="email"
-            placeholder="Correo"
+            type="text"
+            placeholder="Usuario"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
