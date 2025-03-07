@@ -6,12 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './usuarios/entities/usuarios.entity';
-import { ClienteModule } from './cliente/cliente.module';
-import { PedidoModule } from './pedido/pedido.module';
 import { ProveedoresModule } from './proveedores/proveedores.module';
-import { ProyectoModule } from './proyecto/proyecto.module';
-import { Cliente } from './cliente/entities/cliente.entity';
-import { Pedido } from './pedido/entities/pedido.entity';
+import { Producto } from './productos/entities/producto.entity';
+import { Proveedor } from './proveedores/entities/proveedore.entity';
+import { ProductosModule } from './productos/productos.module';
+import { CarritoModule } from './carrito/carrito.module';
+import { CarritoProductoModule } from './carrito_producto/carrito_producto.module';
 
 @Module({
   imports: [
@@ -24,15 +24,15 @@ import { Pedido } from './pedido/entities/pedido.entity';
       username: 'root',
       password:process.env.PASSWORD,
       database: process.env.DBNAME,
-      entities: [User,Cliente,Pedido],
+      entities: [User,Producto,Proveedor],
       synchronize: true /*Solo en desarrollo*/,
     }),
     AuthModule,
     UsuariosModule,
-    ClienteModule,
-    PedidoModule,
-    ProyectoModule,
     ProveedoresModule,
+    ProductosModule,
+    CarritoModule,
+    CarritoProductoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

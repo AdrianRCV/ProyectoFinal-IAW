@@ -47,7 +47,7 @@ export class AuthService {
     return {
       message: 'Usuario registrado correctamente',
       user: {
-        id: newUser.id,
+        id: newUser.id_cliente,
         username: newUser.username,
         email: newUser.email,
       },
@@ -65,7 +65,7 @@ export class AuthService {
       throw new HttpException('Contraseña incorrecta', HttpStatus.UNAUTHORIZED);
     }
 
-    return { id: user.id, username: user.username };
+    return { id: user.id_cliente, username: user.username };
   }
 
   async login(
