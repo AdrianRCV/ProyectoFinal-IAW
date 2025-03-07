@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { IsNotEmpty, Length, IsEmail } from 'class-validator';
+import { Carrito } from 'src/carrito/entities/carrito.entity';
 
 @Entity('usuarios') // Nombre de la tabla en MySQL
 export class User {
@@ -38,4 +39,7 @@ export class User {
 
   @Column({ type: 'timestamp', name: 'fecha_registro', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
   fechaRegistro: Date;
+
+  @OneToMany(() => Carrito, carrito => carrito.usuario)
+  carritos: Carrito[];
 }

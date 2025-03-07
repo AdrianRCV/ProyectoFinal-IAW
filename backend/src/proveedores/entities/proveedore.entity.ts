@@ -7,7 +7,7 @@ export class Proveedor {
     @PrimaryGeneratedColumn({ name: 'id_proveedor' })
     idProveedor: number;
 
-    @Column({ unique: true, type: 'varchar', length: 15 })
+    @Column({ unique: true, type: 'varchar', length: 100 })
     @IsEmail({}, { message: 'El correo electrónico debe ser válido' })
     correoElectronico: string;
     
