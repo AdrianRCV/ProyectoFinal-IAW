@@ -2,19 +2,21 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
+import { Producto } from './entities/producto.entity';
 
 @Controller('productos')
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) {}
 
-  @Post()
-  create(@Body() createProductoDto: CreateProductoDto) {
-    return this.productosService.create(createProductoDto);
+  @Get()
+  async findAll(): Promise<Producto[]> {
+    return this.productosService.findAll();
   }
 
-  @Get()
-  findAll() {
-    return this.productosService.findAll();
+  @Post()
+  async create(@Body() createProductoDto: CreateProductoDto): Promise<Producto> {
+    const { nombre_producto, imagen, categoria, detalle, precio, proveedor } = createProductoDto;
+    return this.productosService.createProducto({ nombre_producto, imagen, categoria, detalle, precio, proveedor });
   }
 
   @Get(':id')

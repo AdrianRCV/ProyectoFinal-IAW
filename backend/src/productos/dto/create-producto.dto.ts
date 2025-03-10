@@ -1,6 +1,8 @@
-import { IsNotEmpty, Length, IsDecimal, Min, IsInt } from 'class-validator';
+import { IsNotEmpty, Length, Min, IsOptional } from 'class-validator';
+import { Column } from 'typeorm';
 
 export class CreateProductoDto {
+  @Column({ type: 'varchar', length: 5000 })
   @IsNotEmpty({ message: 'La imagen no puede estar vacía' })
   imagen: string;
 
@@ -16,11 +18,10 @@ export class CreateProductoDto {
   @Length(1, 50, { message: 'El detalle debe tener entre 1 y 50 caracteres' })
   detalle: string;
 
-  @IsDecimal({}, { message: 'El precio debe ser un número decimal válido' })
   @Min(0, { message: 'El precio debe ser mayor o igual a 0' })
   precio: number;
 
-  @IsInt({ message: 'El ID del proveedor debe ser un número entero' })
-  @Min(1, { message: 'El ID del proveedor debe ser mayor o igual a 1' })
-  proveedorId: number;
+  @IsOptional()
+  @IsNotEmpty({ message: 'El proveedor no puede estar vacío' })
+  proveedor: string;
 }
