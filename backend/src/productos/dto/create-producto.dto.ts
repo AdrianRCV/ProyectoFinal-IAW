@@ -7,7 +7,9 @@ export class CreateProductoDto {
   imagen: string;
 
   @IsNotEmpty({ message: 'El nombre del producto no puede estar vacío' })
-  @Length(1, 50, { message: 'El nombre del producto debe tener entre 1 y 50 caracteres' })
+  @Length(1, 50, {
+    message: 'El nombre del producto debe tener entre 1 y 50 caracteres',
+  })
   nombre_producto: string;
 
   @IsNotEmpty({ message: 'La categoría no puede estar vacía' })
@@ -15,7 +17,9 @@ export class CreateProductoDto {
   categoria: string;
 
   @IsNotEmpty({ message: 'El detalle no puede estar vacío' })
-  @Length(1, 50, { message: 'El detalle debe tener entre 1 y 50 caracteres' })
+  @Length(1, 1000, {
+    message: 'El detalle debe tener entre 1 y 300 caracteres',
+  })
   detalle: string;
 
   @Min(0, { message: 'El precio debe ser mayor o igual a 0' })

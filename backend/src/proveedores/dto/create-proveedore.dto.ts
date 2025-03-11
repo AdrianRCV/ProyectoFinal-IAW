@@ -10,7 +10,9 @@ export class CreateProveedorDto {
   nombre: string;
 
   @IsNotEmpty({ message: 'Los apellidos no pueden estar vacíos' })
-  @Length(1, 50, { message: 'Los apellidos deben tener entre 1 y 50 caracteres' })
+  @Length(1, 50, {
+    message: 'Los apellidos deben tener entre 1 y 50 caracteres',
+  })
   apellidos: string;
 
   @IsOptional()
@@ -18,6 +20,8 @@ export class CreateProveedorDto {
   contacto: string;
 
   @IsOptional()
-  @Length(1, 100, { message: 'El teléfono debe tener entre 1 y 100 caracteres' })
+  @Length(1, 100, {
+    message: 'El teléfono debe tener entre 1 y 100 caracteres',
+  })
   telefono: string;
 }

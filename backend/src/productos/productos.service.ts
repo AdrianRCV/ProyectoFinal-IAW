@@ -11,9 +11,12 @@ export class ProductosService {
     @InjectRepository(Producto, 'base1')
     private productoRepository: Repository<Producto>,
   ) {}
-  
-  async createProducto(createProductoDto: CreateProductoDto): Promise<Producto> {
-    const { nombre_producto, imagen, categoria, detalle, precio } = createProductoDto;
+
+  async createProducto(
+    createProductoDto: CreateProductoDto,
+  ): Promise<Producto> {
+    const { nombre_producto, imagen, categoria, detalle, precio } =
+      createProductoDto;
     const producto = new Producto();
     producto.nombre_producto = nombre_producto;
     producto.imagen = imagen;
@@ -28,15 +31,22 @@ export class ProductosService {
   }
 
   async findOne(id: number): Promise<Producto> {
-    const producto = await this.productoRepository.findOne({ where: { idProducto: id } });
+    const producto = await this.productoRepository.findOne({
+      where: { idProducto: id },
+    });
     if (!producto) {
       throw new Error(`Producto ${id} no encontrado`);
     }
     return producto;
   }
 
-  async update(id: number, updateProductoDto: UpdateProductoDto): Promise<Producto> {
-    const producto = await this.productoRepository.findOne({ where: { idProducto: id } });
+  async update(
+    id: number,
+    updateProductoDto: UpdateProductoDto,
+  ): Promise<Producto> {
+    const producto = await this.productoRepository.findOne({
+      where: { idProducto: id },
+    });
     if (!producto) {
       throw new Error(`Producto con ID ${id} no encontrado`);
     }
@@ -45,7 +55,9 @@ export class ProductosService {
   }
 
   async remove(id: number): Promise<void> {
-    const producto = await this.productoRepository.findOne({ where: { idProducto: id } });
+    const producto = await this.productoRepository.findOne({
+      where: { idProducto: id },
+    });
     if (!producto) {
       throw new Error(`Producto ${id} no encontrado`);
     }

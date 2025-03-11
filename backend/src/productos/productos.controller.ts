@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
@@ -14,9 +22,19 @@ export class ProductosController {
   }
 
   @Post()
-  async create(@Body() createProductoDto: CreateProductoDto): Promise<Producto> {
-    const { nombre_producto, imagen, categoria, detalle, precio, proveedor } = createProductoDto;
-    return this.productosService.createProducto({ nombre_producto, imagen, categoria, detalle, precio, proveedor });
+  async create(
+    @Body() createProductoDto: CreateProductoDto,
+  ): Promise<Producto> {
+    const { nombre_producto, imagen, categoria, detalle, precio, proveedor } =
+      createProductoDto;
+    return this.productosService.createProducto({
+      nombre_producto,
+      imagen,
+      categoria,
+      detalle,
+      precio,
+      proveedor,
+    });
   }
 
   @Get(':id')
@@ -25,12 +43,15 @@ export class ProductosController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto): Promise<any> {
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductoDto: UpdateProductoDto,
+  ): Promise<any> {
     return this.productosService.update(+id, updateProductoDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string):Promise<any> {
+  async remove(@Param('id') id: string): Promise<any> {
     return this.productosService.remove(+id);
   }
 }
