@@ -1,34 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Delete, Get, Patch, Param, Body } from '@nestjs/common';
 import { CarritoProductoService } from './carrito_producto.service';
-import { CreateCarritoProductoDto } from './dto/create-carrito_producto.dto';
-import { UpdateCarritoProductoDto } from './dto/update-carrito_producto.dto';
 
 @Controller('carrito-producto')
 export class CarritoProductoController {
   constructor(private readonly carritoProductoService: CarritoProductoService) {}
 
-  @Post()
-  create(@Body() createCarritoProductoDto: CreateCarritoProductoDto) {
-    return this.carritoProductoService.create(createCarritoProductoDto);
+  @Post(':carritoId/producto/:productoId')
+  addProduct(@Param('carritoId') carritoId: number, @Param('productoId') productoId: number, @Body('cantidad') cantidad: number) {
+    return this.carritoProductoService.addProduct(+carritoId, +productoId, cantidad);
   }
 
-  @Get()
-  findAll() {
-    return this.carritoProductoService.findAll();
+  @Delete(':carritoId/producto/:productoId')
+  removeProduct(@Param('carritoId') carritoId: number, @Param('productoId') productoId: number) {
+    return this.carritoProductoService.removeProduct(+carritoId, +productoId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.carritoProductoService.findOne(+id);
+  @Get(':carritoId')
+  findByCarrito(@Param('carritoId') carritoId: number) {
+    return this.carritoProductoService.findByCarrito(+carritoId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCarritoProductoDto: UpdateCarritoProductoDto) {
-    return this.carritoProductoService.update(+id, updateCarritoProductoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.carritoProductoService.remove(+id);
+  @Patch(':carritoId/producto/:productoId')
+  updateQuantity(@Param('carritoId') carritoId: number, @Param('productoId') productoId: number, @Body('cantidad') cantidad: number) {
+    return this.carritoProductoService.updateQuantity(+carritoId, +productoId, cantidad);
   }
 }
