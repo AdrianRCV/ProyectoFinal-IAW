@@ -166,3 +166,75 @@ a.secondary {
     filter: invert();
   }
 }
+
+/*cards*/
+
+.container {
+  padding: 20px;
+}
+
+/* Título principal */
+.heading {
+  text-align: center;
+  margin-top: 20px;
+  color: #333;
+}
+
+/* Contenedor para las tarjetas */
+.cardsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Tarjeta individual */
+.postCard {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  width: 300px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.postCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Título dentro de la tarjeta */
+.cardTitle {
+  margin-top: 0;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+/* Texto dentro de la tarjeta */
+.cardText {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Título principal del modal */
+.modalTitle {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+/* Encabezado dentro del modal */
+.modalHeading {
+  margin-top: 0;
+  font-size: 1.75rem;
+  color: #333;
+}
+
+/* Subtítulo o heading para info de usuario/comentarios */
+.userInfoHeading {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  color: #444;
+}
+
