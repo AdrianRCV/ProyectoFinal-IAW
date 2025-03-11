@@ -22,6 +22,5 @@ export class CreateProductoDto {
   precio: number;
 
   @IsOptional()
-  @IsNotEmpty({ message: 'El proveedor no puede estar vacío' })
   proveedor: string;
 }

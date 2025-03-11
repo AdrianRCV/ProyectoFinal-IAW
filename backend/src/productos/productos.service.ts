@@ -27,15 +27,28 @@ export class ProductosService {
     return this.productoRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} producto`;
+  async findOne(id: number): Promise<Producto> {
+    const producto = await this.productoRepository.findOne({ where: { idProducto: id } });
+    if (!producto) {
+      throw new Error(`Producto ${id} no encontrado`);
+    }
+    return producto;
   }
 
-  update(id: number, updateProductoDto: UpdateProductoDto) {
-    return `This action updates a #${id} producto`;
+  async update(id: number, updateProductoDto: UpdateProductoDto): Promise<Producto> {
+    const producto = await this.productoRepository.findOne({ where: { idProducto: id } });
+    if (!producto) {
+      throw new Error(`Producto con ID ${id} no encontrado`);
+    }
+    Object.assign(producto, updateProductoDto);
+    return this.productoRepository.save(producto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} producto`;
+  async remove(id: number): Promise<void> {
+    const producto = await this.productoRepository.findOne({ where: { idProducto: id } });
+    if (!producto) {
+      throw new Error(`Producto ${id} no encontrado`);
+    }
+    await this.productoRepository.remove(producto);
   }
 }

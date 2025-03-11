@@ -15,9 +15,9 @@ export class CreateProveedorDto {
 
   @IsOptional()
   @Length(1, 30, { message: 'El contacto debe tener entre 1 y 30 caracteres' })
-  contacto?: string;
+  contacto: string;
 
   @IsOptional()
   @Length(1, 100, { message: 'El teléfono debe tener entre 1 y 100 caracteres' })
-  telefono?: string;
+  telefono: string;
 }

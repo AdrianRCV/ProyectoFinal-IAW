@@ -2,19 +2,20 @@ import {Controller,Get,Post,Body,Patch,Param,Delete,} from '@nestjs/common';
 import { ProveedoresService } from './proveedores.service';
 import { CreateProveedorDto } from './dto/create-proveedore.dto';
 import { UpdateProveedoreDto } from './dto/update-proveedore.dto';
+import { Proveedor } from './entities/proveedore.entity';
 
 @Controller('proveedores')
 export class ProveedoresController {
   constructor(private readonly proveedoresService: ProveedoresService) {}
 
-  @Post()
-  create(@Body() createProveedoreDto: CreateProveedorDto) {
-    return this.proveedoresService.create(createProveedoreDto);
+  @Get()
+  async findAll(): Promise<Proveedor[]> {
+    return this.proveedoresService.findAll();
   }
 
-  @Get()
-  findAll() {
-    return this.proveedoresService.findAll();
+  @Post()
+  async create(@Body() createProveedoreDto: CreateProveedorDto) {
+    return this.proveedoresService.create(createProveedoreDto);
   }
 
   @Get(':id')

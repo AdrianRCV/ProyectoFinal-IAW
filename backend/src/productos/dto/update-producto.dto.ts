@@ -19,7 +19,10 @@ export class UpdateProductoDto extends PartialType(CreateProductoDto) {
   detalle?: string;
 
   @IsOptional()
-  @IsDecimal({}, { message: 'El precio debe ser un número decimal válido' })
   @Min(0, { message: 'El precio debe ser mayor o igual a 0' })
   precio?: number;
+
+  @IsOptional()
+  @IsString()
+  proveedor?: string;
 }
