@@ -13,7 +13,9 @@ export class Producto {
 
   @Column({ type: 'varchar', length: 50 })
   @IsNotEmpty({ message: 'El nombre del producto no puede estar vacío' })
-  @Length(1, 50, { message: 'El nombre del producto debe tener entre 1 y 50 caracteres' })
+  @Length(1, 50, {
+    message: 'El nombre del producto debe tener entre 1 y 50 caracteres',
+  })
   nombre_producto: string;
 
   @Column({ type: 'varchar', length: 50 })
@@ -21,9 +23,11 @@ export class Producto {
   @Length(1, 50, { message: 'La categoría debe tener entre 1 y 50 caracteres' })
   categoria: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 1000 })
   @IsNotEmpty({ message: 'El detalle no puede estar vacío' })
-  @Length(1, 50, { message: 'El detalle debe tener entre 1 y 50 caracteres' })
+  @Length(1, 1000, {
+    message: 'El detalle debe tener entre 1 y 1000 caracteres',
+  })
   detalle: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
@@ -31,6 +35,6 @@ export class Producto {
   @Min(0, { message: 'El precio debe ser mayor o igual a 0' })
   precio: number;
 
-  @ManyToOne(() => Proveedor, proveedor => proveedor.productos)
+  @ManyToOne(() => Proveedor, (proveedor) => proveedor.productos)
   proveedor: Proveedor;
 }
