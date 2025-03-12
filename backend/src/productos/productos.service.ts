@@ -21,7 +21,7 @@ export class ProductosService {
     producto.detalle = detalle;
     producto.precio = precio;
     return this.productoRepository.save(producto);
-  }
+  } 
 
   async findAll(): Promise<Producto[]> {
     return this.productoRepository.find();
