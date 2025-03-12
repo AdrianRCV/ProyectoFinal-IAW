@@ -1,20 +1,18 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import styles from '../../page.module.css';
+import { use } from 'react';
+import MasInfoProductos from '../../componentes/MasInfoProductos';
 
-export default function ProductoDetails() {
+export default function ProductoPage({ params }) {
+  // Utilizamos `React.use()` para desempaquetar los params
+  const { id_producto } = use(params);  // Desempaquetamos correctamente
+
   const [producto, setProducto] = useState(null);
-  const router = useRouter();
-  const { id } = router.query;  // Usar `router.query.id` en lugar de `query.id`
 
   useEffect(() => {
-    // Verificar que el id esté presente antes de hacer la llamada a la API
-    if (!id) return; 
-
     const fetchProducto = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/productos/${id}`);
+        const res = await fetch(`http://localhost:3001/productos/${id_producto}`);
         const data = await res.json();
         setProducto(data);
       } catch (error) {
@@ -22,14 +20,18 @@ export default function ProductoDetails() {
       }
     };
 
-    fetchProducto();
-  }, [id]);  // Dependencia en `id`
+    if (id_producto) {
+      fetchProducto();
+    }
+  }, [id_producto]);
 
-  if (!producto) return <p>Cargando detalles del producto...</p>;
+  if (!producto) {
+    return <p>Cargando detalles del producto...</p>;
+  }
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.modalHeading}>{producto.nombre_producto}</h1>
+    <div>
+      <h1>{producto.nombre_producto}</h1>
       <img src={producto.imagen} alt={producto.nombre_producto} className="img-fluid mb-3" />
       <p><strong>Categoría:</strong> {producto.categoria}</p>
       <p><strong>Detalle:</strong> {producto.detalle}</p>

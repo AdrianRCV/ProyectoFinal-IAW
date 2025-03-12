@@ -1,15 +1,14 @@
-'use client'; 
+'use client';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Modal from 'react-bootstrap/Modal';
+import { useRouter } from 'next/navigation'; // Usamos el hook useRouter para la navegación
 import Button from 'react-bootstrap/Button';
 import styles from './page.module.css';
 
 export default function Productos() {
   const [productos, setProductos] = useState([]); 
-  const [showModal, setShowModal] = useState(false); 
   const router = useRouter();
 
+  // Función para obtener los productos desde el API
   const fetchProductos = async () => {
     try {
       const res = await fetch('http://localhost:3001/productos/');
@@ -20,13 +19,19 @@ export default function Productos() {
     }
   };
 
+  // Llamada a fetchProductos cuando el componente se monta
   useEffect(() => {
     fetchProductos();
   }, []);
 
+  // Función que redirige al usuario a la página dinámica del producto
   const handleSeeMore = (producto) => {
-    // Redirige a la ruta dinámica para el producto seleccionado
-    router.push(`/producto/${producto.id}`);
+    console.log("Producto seleccionado:", producto); // Imprimir el producto en la consola para depuración
+    if (producto && producto.idProducto) { // Cambié id_producto a idProducto
+      router.push(`/producto/${producto.idProducto}`); // Redirige usando el idProducto
+    } else {
+      console.error("Producto sin idProducto:", producto); // En caso de que el producto no tenga idProducto
+    }
   };
 
   return (
