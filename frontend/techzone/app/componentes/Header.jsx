@@ -1,112 +1,79 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import styles from './page.module.css';
+"use client";
 
-export default function Productos() {
-  const [productos, setProductos] = useState([]); 
-  const [selectedProducto, setSelectedProducto] = useState(null); 
-  const [showModal, setShowModal] = useState(false); 
+import React, { useState, useEffect } from 'react';
+import styles from "./Header.module.css";
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
+export default function Header() {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
-  const fetchProductos = async () => {
-    try {
-      const res = await fetch('http://localhost:3001/productos/');
-      if (!res.ok) throw new Error('Error en la respuesta del servidor');
-      const data = await res.json();
-      setProductos(data);
-    } catch (error) {
-      console.error('Error al obtener productos:', error);
-    }
-  };
-
   useEffect(() => {
-    fetchProductos();
+    const updateLoginStatus = () => {
+      setIsLoggedIn(!!localStorage.getItem('token'));
+    };
+
+    window.addEventListener('storage', updateLoginStatus);
+    window.addEventListener('login', updateLoginStatus);
+    window.addEventListener('logout', updateLoginStatus);
+
+    updateLoginStatus();
+
+    return () => {
+      window.removeEventListener('storage', updateLoginStatus);
+      window.removeEventListener('login', updateLoginStatus);
+      window.removeEventListener('logout', updateLoginStatus);
+    };
   }, []);
 
-  const handleSeeMore = async (producto) => {
-    try {
-      const res = await fetch(`http://localhost:3001/productos/${producto.id}`);
-      if (!res.ok) throw new Error('Error en la respuesta del servidor');
-      const detail = await res.json();
-      setSelectedProducto(detail);
-      setShowModal(true);
-    } catch (error) {
-      console.error('Error al obtener el detalle del producto:', error);
-    }
-  };
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    fetchProductos();
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.dispatchEvent(new Event('logout'));
+    router.push('/');
   };
 
   return (
-    <div>
-      {productos.length > 0 ? (
-        <div className={styles.cardsContainer}>
-          {productos.map((producto) => (
-            <div className={styles.postCard} key={producto.id}>
-              <img
-                src={producto.imagen}
-                alt={producto.nombre_producto}
-                className={`${styles.productImage} card-img-top`}
-              />
-              <div className={styles.cardBody}>
-                <h5 className="card-title">{producto.nombre_producto}</h5>
-                <p className="card-text">
-                  <strong>Categoría:</strong> {producto.categoria}
-                </p>
-                <p className="card-text">
-                  <strong>Precio:</strong> ${producto.precio}
-                </p>
-                <Button variant="primary" onClick={() => handleSeeMore(producto)}>
-                  ¿Saber más?
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>Cargando productos...</p>
-      )}
+    <header className={styles.header}>
+      <div className={styles.logo}>
+        <Image src="/logo.png" alt="Logo" width={100} height={50} />
+      </div>
 
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{selectedProducto?.nombre_producto}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedProducto && (
-            <div>
-              <img
-                src={selectedProducto.imagen}
-                alt={selectedProducto.nombre_producto}
-                className="img-fluid mb-3"
-              />
-              <p>
-                <strong>Categoría:</strong> {selectedProducto.categoria}
-              </p>
-              <p>
-                <strong>Detalle:</strong> {selectedProducto.detalle}
-              </p>
-              <p>
-                <strong>Precio:</strong> ${selectedProducto.precio}
-              </p>
-              <p>
-                <strong>Proveedor:</strong> {selectedProducto.proveedor}
-              </p>
-            </div>
+      <nav>
+        <ul className={styles.navList}>
+          <li className={styles.dropdown}>
+            <button onClick={toggleDropdown} className={styles.dropdownButton}>
+              Productos
+            </button>
+            {isDropdownOpen && (
+              <ul>
+                <li><Link href="/productos/ordenadores">Ordenadores</Link></li>
+                <li><Link href="/productos/tablets">Tablets</Link></li>
+                <li><Link href="/productos/telefonos">Telefonos</Link></li>
+              </ul>
+            )}
+          </li>
+          <li><Link href="/about">Sobre nosotros</Link></li>
+
+          {isLoggedIn ? (
+            <>
+              <li><Link href="/carrito">Carrito</Link></li>
+              <li><Link href="/admin">Panel de admin</Link></li>
+              <li><button onClick={handleLogout}>Logout</button></li>
+            </>
+          ) : (
+            <>
+              <li><Link href="/login">Login</Link></li>
+              <li><Link href="/registro">Registrate</Link></li>
+            </>
           )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+        </ul>
+      </nav>
+    </header>
   );
 }
 
