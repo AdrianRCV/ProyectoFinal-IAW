@@ -21,7 +21,6 @@ async function addProducto(formData) {
       throw new Error("Error al agregar el producto");
     }
 
-    // Opcional: obtener respuesta en JSON si el backend la envía
     return await res.json();
   } catch (error) {
     console.error(error);
@@ -37,49 +36,54 @@ export default function AdminProductos() {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold my-4">Administrar Productos</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 border p-4 rounded">
-        <input
-          name="imagen"
-          type="text"
-          placeholder="URL de la imagen"
-          className="block w-full p-2 border rounded"
-          required
-        />
-        <input
-          name="nombre_producto"
-          type="text"
-          placeholder="Nombre del producto"
-          className="block w-full p-2 border rounded"
-          required
-        />
-        <input
-          name="categoria"
-          type="text"
-          placeholder="Categoría"
-          className="block w-full p-2 border rounded"
-          required
-        />
-        <textarea
-          name="detalle"
-          placeholder="Detalle"
-          className="block w-full p-2 border rounded"
-          required
-        />
-        <input
-          name="precio"
-          type="number"
-          step="0.01"
-          placeholder="Precio"
-          className="block w-full p-2 border rounded"
-          required
-        />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-          Agregar Producto
-        </button>
-      </form>
+    <div className={styles.container}>
+      <div className={styles.formContainer}>
+        <h1 className={styles.title}>Administrar Productos</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            name="imagen"
+            type="text"
+            placeholder="URL de la imagen"
+            className={styles.input}
+            required
+          />
+          <input
+            name="nombre_producto"
+            type="text"
+            placeholder="Nombre del producto"
+            className={styles.input}
+            required
+          />
+          <input
+            name="categoria"
+            type="text"
+            placeholder="Categoría"
+            className={styles.input}
+            required
+          />
+          <textarea
+            name="detalle"
+            placeholder="Detalle"
+            className={styles.input}
+            required
+          />
+          <input
+            name="precio"
+            type="number"
+            step="0.01"
+            placeholder="Precio"
+            className={styles.input}
+            required
+          />
+          <button type="submit" className={`${styles.button} ${styles.spaceY}`}>
+            Agregar Producto
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
+
+
+
 
