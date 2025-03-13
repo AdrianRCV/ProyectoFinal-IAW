@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 
-// Función para obtener todos los productos
 async function fetchProductos() {
   try {
     const res = await fetch("http://localhost:3001/productos");
@@ -14,7 +13,6 @@ async function fetchProductos() {
   }
 }
 
-// Función para agregar un producto
 async function addProducto(formData) {
   try {
     const res = await fetch("http://localhost:3001/productos", {
@@ -37,7 +35,6 @@ async function addProducto(formData) {
   }
 }
 
-// Función para actualizar un producto existente
 async function updateProducto(id, formData) {
   try {
     const res = await fetch(`http://localhost:3001/productos/${id}`, {
@@ -60,7 +57,6 @@ async function updateProducto(id, formData) {
   }
 }
 
-// Función para borrar un producto
 async function deleteProducto(id) {
   try {
     const res = await fetch(`http://localhost:3001/productos/${id}`, {
@@ -75,42 +71,34 @@ async function deleteProducto(id) {
 
 export default function AdminProductos() {
   const [productos, setProductos] = useState([]);
-  const [editingProducto, setEditingProducto] = useState(null);
+  const [modo, setModo] = useState("añadir");
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
   useEffect(() => {
     loadProductos();
   }, []);
 
-  // Cargar la lista de productos
   const loadProductos = async () => {
     const data = await fetchProductos();
     setProductos(data);
   };
 
-  // Maneja el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    if (editingProducto) {
-
-      await updateProducto(editingProducto.id, formData);
-      setEditingProducto(null);
-    } else {
+    if (modo === "añadir") {
       await addProducto(formData);
+    } else if (modo === "modificar" && productoSeleccionado) {
+      await updateProducto(productoSeleccionado.id, formData);
+      setProductoSeleccionado(null);
+    } else if (modo === "eliminar" && productoSeleccionado) {
+      await deleteProducto(productoSeleccionado.id);
+      setProductoSeleccionado(null);
     }
+
     form.reset();
-    loadProductos();
-  };
-
- 
-  const handleEdit = (producto) => {
-    setEditingProducto(producto);
-  };
-
-  const handleDelete = async (id) => {
-    await deleteProducto(id);
     loadProductos();
   };
 
@@ -118,79 +106,50 @@ export default function AdminProductos() {
     <div className={styles.container}>
       <div className={styles.formContainer}>
         <h1 className={styles.title}>Administrar Productos</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            name="imagen"
-            type="text"
-            placeholder="URL de la imagen"
-            className={styles.input}
-            defaultValue={editingProducto ? editingProducto.imagen : ""}
-            required
-          />
-          <input
-            name="nombre_producto"
-            type="text"
-            placeholder="Nombre del producto"
-            className={styles.input}
-            defaultValue={
-              editingProducto ? editingProducto.nombre_producto : ""
-            }
-            required
-          />
-          <input
-            name="categoria"
-            type="text"
-            placeholder="Categoría"
-            className={styles.input}
-            defaultValue={editingProducto ? editingProducto.categoria : ""}
-            required
-          />
-          <textarea
-            name="detalle"
-            placeholder="Detalle"
-            className={styles.input}
-            defaultValue={editingProducto ? editingProducto.detalle : ""}
-            required
-          />
-          <input
-            name="precio"
-            type="number"
-            step="0.01"
-            placeholder="Precio"
-            className={styles.input}
-            defaultValue={editingProducto ? editingProducto.precio : ""}
-            required
-          />
-          <button type="submit" className={`${styles.button} ${styles.spaceY}`}>
-            {editingProducto ? "Actualizar Producto" : "Agregar Producto"}
-          </button>
-        </form>
-      </div>
+        <select className={styles.select} value={modo} onChange={(e) => setModo(e.target.value)}>
+          <option value="añadir">Añadir Producto</option>
+          <option value="modificar">Modificar Producto</option>
+          <option value="eliminar">Eliminar Producto</option>
+        </select>
 
-      <div className={styles.productList}>
-        <h2>Lista de Productos</h2>
-        {productos.map((producto) => (
-          <div key={producto.id} className={styles.productItem}>
-            <p>{producto.nombre_producto}</p>
-            <button
-              onClick={() => handleEdit(producto)}
-              className={styles.button}
-            >
-              Editar
+        {(modo === "modificar" || modo === "eliminar") && (
+          <select
+            className={styles.select}
+            onChange={(e) =>
+              setProductoSeleccionado(productos.find((p) => p.id === parseInt(e.target.value)))
+            }
+          >
+            <option value="">Selecciona un producto</option>
+            {productos.map((producto) => (
+              <option key={producto.id} value={producto.id}>
+                {producto.nombre_producto}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {modo !== "eliminar" && (
+          <form onSubmit={handleSubmit}>
+            <input name="imagen" type="text" placeholder="URL de la imagen" className={styles.input} required />
+            <input name="nombre_producto" type="text" placeholder="Nombre del producto" className={styles.input} required />
+            <input name="categoria" type="text" placeholder="Categoría" className={styles.input} required />
+            <textarea name="detalle" placeholder="Detalle" className={styles.input} required />
+            <input name="precio" type="number" step="0.01" placeholder="Precio" className={styles.input} required />
+            <button type="submit" className={`${styles.button} ${styles.spaceY}`}>
+              {modo === "añadir" ? "Agregar Producto" : "Actualizar Producto"}
             </button>
-            <button
-              onClick={() => handleDelete(producto.id)}
-              className={styles.button}
-            >
-              Borrar
-            </button>
-          </div>
-        ))}
+          </form>
+        )}
+
+        {modo === "eliminar" && productoSeleccionado && (
+          <button onClick={() => handleSubmit(new Event("submit"))} className={`${styles.button} ${styles.spaceY}`}>
+            Eliminar Producto
+          </button>
+        )}
       </div>
     </div>
   );
 }
-
 
 
 
