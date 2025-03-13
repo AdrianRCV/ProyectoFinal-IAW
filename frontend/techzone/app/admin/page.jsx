@@ -1,25 +1,12 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from "./page.module.css";
-
-async function fetchProductos() {
-  try {
-    const res = await fetch("http://localhost:3001/productos");
-    if (!res.ok) throw new Error("Error al obtener productos");
-    return await res.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
 
 async function addProducto(formData) {
   try {
     const res = await fetch("http://localhost:3001/productos", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         nombre_producto: formData.get("nombre_producto"),
         imagen: formData.get("imagen"),
@@ -39,9 +26,7 @@ async function updateProducto(id, formData) {
   try {
     const res = await fetch(`http://localhost:3001/productos/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         nombre_producto: formData.get("nombre_producto"),
         imagen: formData.get("imagen"),
@@ -70,18 +55,8 @@ async function deleteProducto(id) {
 }
 
 export default function AdminProductos() {
-  const [productos, setProductos] = useState([]);
   const [modo, setModo] = useState("añadir");
-  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
-
-  useEffect(() => {
-    loadProductos();
-  }, []);
-
-  const loadProductos = async () => {
-    const data = await fetchProductos();
-    setProductos(data);
-  };
+  const [idProducto, setIdProducto] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -90,22 +65,21 @@ export default function AdminProductos() {
 
     if (modo === "añadir") {
       await addProducto(formData);
-    } else if (modo === "modificar" && productoSeleccionado) {
-      await updateProducto(productoSeleccionado.id, formData);
-      setProductoSeleccionado(null);
-    } else if (modo === "eliminar" && productoSeleccionado) {
-      await deleteProducto(productoSeleccionado.id);
-      setProductoSeleccionado(null);
+    } else if (modo === "modificar" && idProducto) {
+      await updateProducto(idProducto, formData);
+    } else if (modo === "eliminar" && idProducto) {
+      await deleteProducto(idProducto);
     }
 
     form.reset();
-    loadProductos();
+    setIdProducto("");
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.formContainer}>
         <h1 className={styles.title}>Administrar Productos</h1>
+
         <select className={styles.select} value={modo} onChange={(e) => setModo(e.target.value)}>
           <option value="añadir">Añadir Producto</option>
           <option value="modificar">Modificar Producto</option>
@@ -113,19 +87,14 @@ export default function AdminProductos() {
         </select>
 
         {(modo === "modificar" || modo === "eliminar") && (
-          <select
-            className={styles.select}
-            onChange={(e) =>
-              setProductoSeleccionado(productos.find((p) => p.id === parseInt(e.target.value)))
-            }
-          >
-            <option value="">Selecciona un producto</option>
-            {productos.map((producto) => (
-              <option key={producto.id} value={producto.id}>
-                {producto.nombre_producto}
-              </option>
-            ))}
-          </select>
+          <input
+            type="number"
+            placeholder="ID del producto"
+            className={styles.input}
+            value={idProducto}
+            onChange={(e) => setIdProducto(e.target.value)}
+            required
+          />
         )}
 
         {modo !== "eliminar" && (
@@ -141,8 +110,8 @@ export default function AdminProductos() {
           </form>
         )}
 
-        {modo === "eliminar" && productoSeleccionado && (
-          <button onClick={() => handleSubmit(new Event("submit"))} className={`${styles.button} ${styles.spaceY}`}>
+        {modo === "eliminar" && idProducto && (
+          <button onClick={handleSubmit} className={`${styles.button} ${styles.spaceY}`}>
             Eliminar Producto
           </button>
         )}
@@ -150,6 +119,7 @@ export default function AdminProductos() {
     </div>
   );
 }
+
 
 
 
