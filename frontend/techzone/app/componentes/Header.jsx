@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import styles from "./Header.module.css";
@@ -37,9 +37,13 @@ export default function Header() {
     router.push('/');
   };
 
+  const handleLogoClick = () => {
+    router.push('/');
+  };
+
   return (
     <header className={styles.header}>
-      <div className={styles.logo}>
+      <div className={styles.logo} onClick={handleLogoClick}>
         <Image src="/logo.png" alt="Logo" width={100} height={50} />
       </div>
 
@@ -76,6 +80,3 @@ export default function Header() {
     </header>
   );
 }
-
-
-

@@ -27,6 +27,14 @@ export class CarritoService {
       throw new NotFoundException('Usuario no encontrado');
     }
 
+    const carritoExistente = await this.carritoRepository.findOne({
+      where: { usuario: usuario },
+    });
+
+    if (carritoExistente) {
+      return carritoExistente;
+    }
+
     const carrito = this.carritoRepository.create({ usuario, productos: [] });
     return this.carritoRepository.save(carrito);
   }
@@ -40,18 +48,19 @@ export class CarritoService {
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
     }
-  
+
     const carrito = await this.carritoRepository.findOne({
       where: { usuario },
-      relations: ['productos'],
+      relations: ['productos', 'productos.producto'],
     });
-  
+
     if (!carrito) {
       throw new NotFoundException('Carrito no encontrado');
     }
-  
+
     return carrito;
   }
+
   async update(id: number, updateCarritoDto: Partial<CreateCarritoDto>): Promise<Carrito> {
     const carrito = await this.findOneByUserId(id);
 
@@ -76,7 +85,7 @@ export class CarritoService {
   async addProductToCart(carritoId: number, productoId: number, cantidad: number): Promise<CarritoProducto> {
     const carrito = await this.findOneByUserId(carritoId);
 
-    const producto = await this.productosService.findOne(productoId); 
+    const producto = await this.productosService.findOne(productoId);
 
     if (!producto) {
       throw new NotFoundException('Producto no encontrado');

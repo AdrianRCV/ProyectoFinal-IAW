@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import styles from '../../page.module.css';
 
 export default function CarritoPage({ params }) {
-  const { id_cliente } = React.use(params); 
+  const { id_cliente } = React.use(params);  // Cambié esto para acceder correctamente al `id_cliente`
   const [carrito, setCarrito] = useState(null);
   const router = useRouter();
 
@@ -38,22 +38,37 @@ export default function CarritoPage({ params }) {
     }
   }, [id_cliente]);
 
-  const handleRemoveProduct = async (productoId) => {
+  async function handleRemoveProduct(idCliente, idProducto) {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No token found");
+  
+    const res = await fetch(`http://localhost:3001/carrito/${idCliente}/producto/${idProducto}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Failed to delete product from cart");
+    }
+  }
+
+  const RemoveProduct = async (productoId) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:3001/carrito/${id_cliente}/producto/${productoId}`, {
-        method: 'DELETE',
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("Error al eliminar el producto");
-
+      await handleRemoveProduct(id_cliente, productoId); // Llama a la función DELETE
+  
+      // Actualiza el estado del carrito después de eliminar el producto
       const updatedCarrito = carrito.productos.filter(prod => prod.idProducto !== productoId);
       setCarrito(prev => ({ ...prev, productos: updatedCarrito }));
     } catch (error) {
-      console.error("Error al eliminar el producto del carrito:", error);
+      console.error("Error eliminando producto:", error.message);
+  
+      if (error.message === "No token found" || error.message.includes("Failed to delete product from cart")) {
+        alert("No se pudo eliminar el producto. Tu sesión puede haber expirado.");
+        router.push("/login"); // Redirige a login si el token es inválido
+      }
     }
   };
 
@@ -79,11 +94,11 @@ export default function CarritoPage({ params }) {
           <tbody>
             {carrito.productos.map((producto, index) => (
               <tr key={producto.idProducto || `producto-${index}`}>
-                <td>{producto.nombre_producto}</td>
+                <td>{producto.producto.nombre_producto}</td>
                 <td>{producto.cantidad}</td>
                 <td>${producto.precio}</td>
                 <td>
-                  <button onClick={() => handleRemoveProduct(producto.idProducto)}>
+                  <button onClick={() => RemoveProduct(producto.idProducto)}>
                     Eliminar
                   </button>
                 </td>
