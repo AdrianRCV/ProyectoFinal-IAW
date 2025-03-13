@@ -1,22 +1,21 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import styles from './page.module.css';
+"use client";
+import { useState } from "react";
+import styles from "./page.module.css";
 
 async function addProducto(formData) {
   try {
-    const res = await fetch('http://localhost:3001/productos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("http://localhost:3001/productos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        nombre_producto: formData.get('nombre_producto'),
-        imagen: formData.get('imagen'),
-        categoria: formData.get('categoria'),
-        detalle: formData.get('detalle'),
-        precio: parseFloat(formData.get('precio')),
+        nombre_producto: formData.get("nombre_producto"),
+        imagen: formData.get("imagen"),
+        categoria: formData.get("categoria"),
+        detalle: formData.get("detalle"),
+        precio: parseFloat(formData.get("precio")),
       }),
     });
-    if (!res.ok) throw new Error('Error al agregar el producto');
+    if (!res.ok) throw new Error("Error al agregar el producto");
     return await res.json();
   } catch (error) {
     console.error(error);
@@ -26,17 +25,17 @@ async function addProducto(formData) {
 async function updateProducto(id, formData) {
   try {
     const res = await fetch(`http://localhost:3001/productos/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        nombre_producto: formData.get('nombre_producto'),
-        imagen: formData.get('imagen'),
-        categoria: formData.get('categoria'),
-        detalle: formData.get('detalle'),
-        precio: parseFloat(formData.get('precio')),
+        nombre_producto: formData.get("nombre_producto"),
+        imagen: formData.get("imagen"),
+        categoria: formData.get("categoria"),
+        detalle: formData.get("detalle"),
+        precio: parseFloat(formData.get("precio")),
       }),
     });
-    if (!res.ok) throw new Error('Error al actualizar el producto');
+    if (!res.ok) throw new Error("Error al actualizar el producto");
     return await res.json();
   } catch (error) {
     console.error(error);
@@ -46,9 +45,9 @@ async function updateProducto(id, formData) {
 async function deleteProducto(id) {
   try {
     const res = await fetch(`http://localhost:3001/productos/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
-    if (!res.ok) throw new Error('Error al eliminar el producto');
+    if (!res.ok) throw new Error("Error al eliminar el producto");
     return await res.json();
   } catch (error) {
     console.error(error);
@@ -56,34 +55,24 @@ async function deleteProducto(id) {
 }
 
 export default function AdminProductos() {
-  const [modo, setModo] = useState('añadir');
-  const [idProducto, setIdProducto] = useState('');
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('No estás autenticado. Por favor, inicia sesión.');
-      router.push('/login');
-      return;
-    }
-  }, [router]);
+  const [modo, setModo] = useState("añadir");
+  const [idProducto, setIdProducto] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    if (modo === 'añadir') {
+    if (modo === "añadir") {
       await addProducto(formData);
-    } else if (modo === 'modificar' && idProducto) {
+    } else if (modo === "modificar" && idProducto) {
       await updateProducto(idProducto, formData);
-    } else if (modo === 'eliminar' && idProducto) {
+    } else if (modo === "eliminar" && idProducto) {
       await deleteProducto(idProducto);
     }
 
     form.reset();
-    setIdProducto('');
+    setIdProducto("");
   };
 
   return (
@@ -97,7 +86,7 @@ export default function AdminProductos() {
           <option value="eliminar">Eliminar Producto</option>
         </select>
 
-        {(modo === 'modificar' || modo === 'eliminar') && (
+        {(modo === "modificar" || modo === "eliminar") && (
           <input
             type="number"
             placeholder="ID del producto"
@@ -108,7 +97,7 @@ export default function AdminProductos() {
           />
         )}
 
-        {modo !== 'eliminar' && (
+        {modo !== "eliminar" && (
           <form onSubmit={handleSubmit}>
             <input name="imagen" type="text" placeholder="URL de la imagen" className={styles.input} required />
             <input name="nombre_producto" type="text" placeholder="Nombre del producto" className={styles.input} required />
@@ -116,12 +105,12 @@ export default function AdminProductos() {
             <textarea name="detalle" placeholder="Detalle" className={styles.input} required />
             <input name="precio" type="number" step="0.01" placeholder="Precio" className={styles.input} required />
             <button type="submit" className={`${styles.button} ${styles.spaceY}`}>
-              {modo === 'añadir' ? 'Agregar Producto' : 'Actualizar Producto'}
+              {modo === "añadir" ? "Agregar Producto" : "Actualizar Producto"}
             </button>
           </form>
         )}
 
-        {modo === 'eliminar' && idProducto && (
+        {modo === "eliminar" && idProducto && (
           <button onClick={handleSubmit} className={`${styles.button} ${styles.spaceY}`}>
             Eliminar Producto
           </button>
@@ -130,3 +119,7 @@ export default function AdminProductos() {
     </div>
   );
 }
+
+
+
+
