@@ -1,10 +1,14 @@
-import { Controller, Post, Get, Param, Body, Patch, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, Patch, Delete, NotFoundException } from '@nestjs/common';
 import { CarritoService } from './carrito.service';
+import { CarritoProductoService } from 'src/carrito_producto/carrito_producto.service';
 import { CreateCarritoDto } from './dto/create-carrito.dto';
 
 @Controller('carrito')
 export class CarritoController {
-  constructor(private readonly carritoService: CarritoService) {}
+  constructor(
+    private readonly carritoService: CarritoService,
+    private readonly carritoProductoService: CarritoProductoService,
+  ) {}
 
   @Post()
   create(@Body() createCarritoDto: CreateCarritoDto) {
@@ -16,9 +20,16 @@ export class CarritoController {
     return this.carritoService.findAll();
   }
 
-  @Get(':id') 
-  findOne(@Param('id') id: number) {
-    return this.carritoService.findOne(+id);
+  @Get(':id_cliente')
+  async findOne(@Param('id_cliente') id_cliente: number) {
+    let carrito = await this.carritoService.findOneByUserId(id_cliente);
+
+    if (!carrito) {
+      const createCarritoDto = { usuarioId: id_cliente };
+      carrito = await this.carritoService.create(createCarritoDto);
+    }
+
+    return carrito;
   }
 
   @Patch(':id')
@@ -32,8 +43,28 @@ export class CarritoController {
   }
 
   @Post(':carritoId/producto/:productoId')
-  addProduct(@Param('carritoId') carritoId: number, @Param('productoId') productoId: number, @Body('cantidad') cantidad: number) {
-    return this.carritoService.addProduct(+carritoId, +productoId, cantidad);
+  async addProductToCart(
+    @Param('carritoId') carritoId: number,
+    @Param('productoId') productoId: number,
+    @Body() body: { cantidad: number },
+  ) {
+    const carrito = await this.carritoService.findOneByUserId(carritoId);
+    if (!carrito) {
+      throw new NotFoundException('Carrito no encontrado');
+    }
+
+    const producto = await this.carritoProductoService.findProductoById(productoId);
+    if (!producto) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+
+    await this.carritoProductoService.addProductToCarrito(
+      carritoId,
+      productoId,
+      body.cantidad,
+    );
+
+    return { message: 'Producto añadido al carrito correctamente' };
   }
 
   @Delete(':carritoId/producto/:productoId')

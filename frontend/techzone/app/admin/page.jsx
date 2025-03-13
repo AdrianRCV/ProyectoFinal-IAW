@@ -30,9 +30,15 @@ async function addProducto(formData) {
 export default function AdminProductos() {
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    
+    const form = e.currentTarget; 
+    const formData = new FormData(form);
+  
     await addProducto(formData);
-    e.currentTarget.reset();
+  
+    if (form) {
+      form.reset(); 
+    }
   };
 
   return (

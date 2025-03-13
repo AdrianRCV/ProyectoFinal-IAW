@@ -13,7 +13,7 @@ export class CarritoProductoService {
     @InjectRepository(CarritoProducto, 'base1') private readonly carritoProductoRepository: Repository<CarritoProducto>,
   ) {}
 
-  async addProduct(carritoId: number, productoId: number, cantidad: number): Promise<CarritoProducto> {
+  async addProductToCarrito(carritoId: number, productoId: number, cantidad: number): Promise<CarritoProducto> {
     const carrito = await this.carritoRepository.findOne({ where: { idCarrito: carritoId } });
     if (!carrito) throw new Error('Carrito no encontrado');
 
@@ -27,23 +27,9 @@ export class CarritoProductoService {
     return this.carritoProductoRepository.save(carritoProducto);
   }
 
-  async removeProduct(carritoId: number, productoId: number): Promise<void> {
-    await this.carritoProductoRepository.delete({ carrito: { idCarrito: carritoId }, producto: { idProducto: productoId } });
-  }
-
-  async findByCarrito(carritoId: number): Promise<CarritoProducto[]> {
-    return this.carritoProductoRepository.find({ where: { carrito: { idCarrito: carritoId } }, relations: ['producto'] });
-  }
-
-  async updateQuantity(carritoId: number, productoId: number, cantidad: number): Promise<CarritoProducto> {
-    const carritoProducto = await this.carritoProductoRepository.findOne({ 
-      where: { carrito: { idCarrito: carritoId }, producto: { idProducto: productoId } },
-    });
-
-    if (!carritoProducto) throw new Error('Producto no encontrado en el carrito');
-
-    carritoProducto.cantidad = cantidad;
-    carritoProducto.precio = carritoProducto.producto.precio * cantidad;
-    return this.carritoProductoRepository.save(carritoProducto);
+  async findProductoById(productoId: number): Promise<Producto> {
+    const producto = await this.productoRepository.findOne({ where: { idProducto: productoId } });
+    if (!producto) throw new Error('Producto no encontrado');
+    return producto;
   }
 }

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDateColumn } from 'typeorm';
 import { User } from 'src/usuarios/entities/usuarios.entity';
 import { CarritoProducto } from 'src/carrito_producto/entities/carrito_producto.entity';
 
@@ -12,4 +12,7 @@ export class Carrito {
 
     @OneToMany(() => CarritoProducto, carritoProducto => carritoProducto.carrito)
     productos: CarritoProducto[];
+
+    @CreateDateColumn({ name: 'fecha_creacion', type: 'timestamp' })
+    fechaCreacion: Date;
 }

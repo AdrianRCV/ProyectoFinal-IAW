@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsPositive, Min } from 'class-validator';
+import { IsNotEmpty, IsPositive, Min, IsOptional } from 'class-validator';
 
 export class CreateCarritoProductoDto {
   @IsNotEmpty({ message: 'El ID del carrito es obligatorio' })
@@ -16,4 +16,7 @@ export class CreateCarritoProductoDto {
   @IsNotEmpty({ message: 'El precio no puede estar vacío' })
   @Min(0, { message: 'El precio debe ser mayor o igual a 0' })
   precio: number;
+
+  @IsOptional()
+  fechaAgregado?: Date; // Opcional, ya que TypeORM lo genera automáticamente
 }
