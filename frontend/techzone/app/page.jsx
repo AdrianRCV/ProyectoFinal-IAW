@@ -44,7 +44,6 @@ export default function Productos() {
                 className={styles.productImage}
               />
               <div className={styles.cardBody}>
-
                 <Button variant="primary" onClick={() => handleSeeMore(producto)} className={styles.MasInfo}>
                   Mas Información
                 </Button>

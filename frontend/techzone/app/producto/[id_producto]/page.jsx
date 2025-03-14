@@ -21,14 +21,20 @@ export default function ProductoPage({ params }) {
       }
     };
 
-    const fetchCarrito = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          console.error("No hay token disponible.");
-          return;
-        }
+    if (id_producto) {
+      fetchProducto();
+    }
+  }, [id_producto]);
 
+  // Intenta obtener el carrito si hay un token disponible
+  useEffect(() => {
+    const fetchCarrito = async () => {
+      const token = localStorage.getItem("token");
+      // Si no hay token, simplemente no obtenemos el carrito
+      // pero permitimos que el usuario vea los detalles del producto
+      if (!token) return;
+
+      try {
         const userId = 1;
         let res = await fetch(`http://localhost:3001/carrito/${userId}`, {
           headers: {
@@ -58,21 +64,62 @@ export default function ProductoPage({ params }) {
       }
     };
 
-    if (id_producto) {
-      fetchProducto();
-      fetchCarrito();
-    }
-  }, [id_producto]);
+    fetchCarrito();
+  }, []);
 
   const handleAddToCart = async () => {
-    if (!carritoId) {
-      console.error("No se ha encontrado el carrito.");
+    // Verificamos si hay token SOLO cuando se intenta añadir al carrito
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("No estás autenticado. Por favor, inicia sesión para añadir productos al carrito.");
+      router.push('/login');
       return;
     }
 
+    // Si no tenemos carritoId a pesar de tener token, intentamos obtenerlo nuevamente
+    if (!carritoId) {
+      try {
+        const userId = 1;
+        let res = await fetch(`http://localhost:3001/carrito/${userId}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        
+        if (res.status === 404) {
+          res = await fetch('http://localhost:3001/carrito', {
+            method: 'POST',
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ usuarioId: userId }),
+          });
+
+          if (!res.ok) {
+            throw new Error('Error al crear el carrito');
+          }
+        }
+
+        const data = await res.json();
+        setCarritoId(data.idCarrito);
+        
+        // Continuamos con la adición del producto usando el carritoId recién obtenido
+        addProductToCart(token, data.idCarrito);
+      } catch (error) {
+        console.error('Error al obtener o crear el carrito:', error);
+        alert("Error al obtener o crear el carrito. Por favor, intenta de nuevo.");
+      }
+    } else {
+      // Si ya tenemos el carritoId, simplemente añadimos el producto
+      addProductToCart(token, carritoId);
+    }
+  };
+
+  // Función para añadir el producto al carrito
+  const addProductToCart = async (token, cartId) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:3001/carrito/${carritoId}/producto/${id_producto}`, {
+      const res = await fetch(`http://localhost:3001/carrito/${cartId}/producto/${id_producto}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,9 +131,10 @@ export default function ProductoPage({ params }) {
       });
 
       if (!res.ok) throw new Error("Error al añadir el producto al carrito");
-      router.push(`/carrito/${carritoId}`);
+      router.push(`/carrito/${cartId}`);
     } catch (error) {
       console.error("Error al añadir al carrito:", error);
+      alert("Error al añadir el producto al carrito. Por favor, intenta de nuevo.");
     }
   };
 
