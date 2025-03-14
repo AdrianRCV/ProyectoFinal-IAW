@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -32,20 +31,13 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.dispatchEvent(new Event("logout"));
-    router.push("/");
+    localStorage.removeItem('token');
+    window.dispatchEvent(new Event('logout'));
+    router.push('/');
   };
 
   const handleLogoClick = () => {
-    router.push("/");
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim() !== "") {
-      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
-    }
+    router.push('/');
   };
 
   return (
@@ -58,10 +50,7 @@ export default function Header() {
         <ul className={styles.navList}>
           <li className={styles.dropdown}>
             <span className={styles.dropdownTitle}>Productos</span>
-            <ul
-              className={`${styles.dropdownMenu} ${isLoading ? styles.visible : ""
-                }`}
-            >
+            <ul className={`${styles.dropdownMenu} ${isLoading ? styles.visible : ""}`}>
               <li>
                 <Link href="/productos/ordenadores">Ordenadores</Link>
               </li>
@@ -99,20 +88,6 @@ export default function Header() {
               </li>
             </>
           )}
-          <li>
-            <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar productos..."
-                className={styles.searchInput}
-              />
-              <button type="submit" className={styles.searchButton}>
-                Buscar
-              </button>
-            </form>
-          </li>
         </ul>
       </nav>
     </header>
