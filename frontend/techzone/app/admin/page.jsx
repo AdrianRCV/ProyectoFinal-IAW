@@ -50,19 +50,21 @@ async function deleteProducto(id) {
     const res = await fetch(`http://localhost:3001/productos/${id}`, {
       method: 'DELETE',
     });
-    
-    const data = await res.json();
-    
+
     if (!res.ok) {
-      throw new Error(data.message || 'Error al eliminar el producto');
+      throw new Error('Error al eliminar el producto');
     }
-    
+
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : null;
+
     return data;
   } catch (error) {
     console.error('Error en deleteProducto:', error);
     throw error;
   }
 }
+
 
 export default function AdminProductos() {/*Restringir acceso a ruta admin*/ 
   const [modo, setModo] = useState('añadir');
@@ -90,7 +92,6 @@ export default function AdminProductos() {/*Restringir acceso a ruta admin*/
         const form = e.currentTarget;
         const formData = new FormData(form);
         
-        // Convert FormData to a plain object
         const productoData = {
           nombre_producto: formData.get('nombre_producto'),
           imagen: formData.get('imagen'),

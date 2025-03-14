@@ -52,13 +52,13 @@ export default function Header() {
             <span className={styles.dropdownTitle}>Productos</span>
             <ul className={`${styles.dropdownMenu} ${isLoading ? styles.visible : ""}`}>
               <li>
-                <Link href="/producto/ordenadores">Ordenadores</Link>
+                <Link href="/productos/ordenadores">Ordenadores</Link>
               </li>
               <li>
-                <Link href="/producto/tablets">Tablets</Link>
+                <Link href="/productos/tablets">Tablets</Link>
               </li>
               <li>
-                <Link href="/producto/telefonos">Teléfonos</Link>
+                <Link href="/productos/telefonos">Teléfonos</Link>
               </li>
             </ul>
           </li>
