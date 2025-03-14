@@ -55,7 +55,7 @@ async function deleteProducto(id) {
   }
 }
 
-export default function AdminProductos() {
+export default function AdminProductos() {/*Restringir acceso a ruta admin*/ 
   const [modo, setModo] = useState('añadir');
   const [idProducto, setIdProducto] = useState('');
   const router = useRouter();

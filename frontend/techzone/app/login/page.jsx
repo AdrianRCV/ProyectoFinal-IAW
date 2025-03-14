@@ -6,17 +6,16 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
 const Login = () => {
-  const [username, setUsername] = useState(""); // Cambiado de email a username
+  const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Verificar si el usuario ya está autenticado
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      router.push("/admin"); // Redirigir si ya está autenticado
+      router.push("/admin");
     }
   }, [router]);
 
@@ -25,7 +24,7 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await axios.post("http://localhost:3001/auth/login", {
-        username, // Ahora enviamos "username" en lugar de "email"
+        username, 
         password,
       });
 
@@ -33,7 +32,7 @@ const Login = () => {
         localStorage.setItem("token", response.data.access_token);
         setMessage("Login exitoso. Redirigiendo...");
         setTimeout(() => {
-          router.push("/admin"); // Redirigir a la página de administración
+          router.push("/admin"); 
         }, 1000);
       } else {
         setMessage("Error: No se recibió el token de autenticación.");
