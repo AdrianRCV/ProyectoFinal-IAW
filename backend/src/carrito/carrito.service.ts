@@ -22,7 +22,9 @@ export class CarritoService {
   ) {}
 
   async create(createCarritoDto: CreateCarritoDto): Promise<Carrito> {
-    const usuario = await this.userRepository.findOne({ where: { id_cliente: createCarritoDto.usuarioId } });
+    const usuario = await this.userRepository.findOne({
+      where: { id_cliente: createCarritoDto.usuarioId },
+    });
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
     }
@@ -44,7 +46,9 @@ export class CarritoService {
   }
 
   async findOneByUserId(id_cliente: number): Promise<Carrito> {
-    const usuario = await this.userRepository.findOne({ where: { id_cliente } });
+    const usuario = await this.userRepository.findOne({
+      where: { id_cliente },
+    });
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
     }
@@ -61,16 +65,21 @@ export class CarritoService {
     return carrito;
   }
 
-  async update(id: number, updateCarritoDto: Partial<CreateCarritoDto>): Promise<Carrito> {
+  async update(
+    id: number,
+    updateCarritoDto: Partial<CreateCarritoDto>,
+  ): Promise<Carrito> {
     const carrito = await this.findOneByUserId(id);
 
     if (updateCarritoDto.usuarioId) {
-      const usuario = await this.userRepository.findOne({ where: { id_cliente: updateCarritoDto.usuarioId } });
+      const usuario = await this.userRepository.findOne({
+        where: { id_cliente: updateCarritoDto.usuarioId },
+      });
 
       if (!usuario) {
         throw new NotFoundException('Usuario no encontrado');
       }
-      
+
       carrito.usuario = usuario;
     }
 
@@ -82,7 +91,11 @@ export class CarritoService {
     await this.carritoRepository.remove(carrito);
   }
 
-  async addProductToCart(carritoId: number, productoId: number, cantidad: number): Promise<CarritoProducto> {
+  async addProductToCart(
+    carritoId: number,
+    productoId: number,
+    cantidad: number,
+  ): Promise<CarritoProducto> {
     const carrito = await this.findOneByUserId(carritoId);
 
     const producto = await this.productosService.findOne(productoId);
@@ -103,7 +116,10 @@ export class CarritoService {
 
   async removeProduct(carritoId: number, productoId: number): Promise<void> {
     const carritoProducto = await this.carritoProductoRepository.findOne({
-      where: { carrito: { idCarrito: carritoId }, producto: { idProducto: productoId } },
+      where: {
+        carrito: { idCarrito: carritoId },
+        producto: { idProducto: productoId },
+      },
     });
 
     if (!carritoProducto) {

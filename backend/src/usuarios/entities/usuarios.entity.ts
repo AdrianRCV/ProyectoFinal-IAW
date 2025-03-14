@@ -12,14 +12,21 @@ export class User {
   @Length(1, 15, { message: 'El usuario debe tener entre 1 y 15 caracteres' })
   username: string;
 
-  @Column({ unique: true, type: 'varchar', length: 100, name: 'correo_electronico' })
+  @Column({
+    unique: true,
+    type: 'varchar',
+    length: 100,
+    name: 'correo_electronico',
+  })
   @IsEmail({}, { message: 'El correo electrónico debe ser válido' })
   @IsNotEmpty({ message: 'El correo electrónico no puede estar vacío' })
   email: string;
 
   @Column()
   @IsNotEmpty({ message: 'La contraseña no puede estar vacía' })
-  @Length(8, 20, { message: 'La contraseña debe tener entre 8 y 20 caracteres' })
+  @Length(8, 20, {
+    message: 'La contraseña debe tener entre 8 y 20 caracteres',
+  })
   password: string;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
@@ -27,19 +34,28 @@ export class User {
   nombre: string;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
-  @Length(1, 50, { message: 'Los apellidos deben tener entre 1 y 50 caracteres' })
+  @Length(1, 50, {
+    message: 'Los apellidos deben tener entre 1 y 50 caracteres',
+  })
   apellidos: string;
 
   @Column({ unique: true, type: 'varchar', length: 15, nullable: true })
   telefono: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  @Length(1, 100, { message: 'La dirección debe tener entre 1 y 100 caracteres' })
+  @Length(1, 100, {
+    message: 'La dirección debe tener entre 1 y 100 caracteres',
+  })
   direccion: string;
 
-  @Column({ type: 'timestamp', name: 'fecha_registro', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'timestamp',
+    name: 'fecha_registro',
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   fechaRegistro: Date;
 
-  @OneToMany(() => Carrito, carrito => carrito.usuario)
+  @OneToMany(() => Carrito, (carrito) => carrito.usuario)
   carritos: Carrito[];
 }
