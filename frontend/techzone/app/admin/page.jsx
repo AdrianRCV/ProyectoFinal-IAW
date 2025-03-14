@@ -3,43 +3,45 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
-async function addProducto(formData) {
+async function addProducto(productoData) {
   try {
     const res = await fetch('http://localhost:3001/productos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre_producto: formData.get('nombre_producto'),
-        imagen: formData.get('imagen'),
-        categoria: formData.get('categoria'),
-        detalle: formData.get('detalle'),
-        precio: parseFloat(formData.get('precio')),
-      }),
+      body: JSON.stringify(productoData),
     });
-    if (!res.ok) throw new Error('Error al agregar el producto');
-    return await res.json();
+    
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.message || 'Error al agregar el producto');
+    }
+    
+    return data;
   } catch (error) {
-    console.error(error);
+    console.error('Error en addProducto:', error);
+    throw error;
   }
 }
 
-async function updateProducto(id, formData) {
+async function updateProducto(id, productoData) {
   try {
     const res = await fetch(`http://localhost:3001/productos/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre_producto: formData.get('nombre_producto'),
-        imagen: formData.get('imagen'),
-        categoria: formData.get('categoria'),
-        detalle: formData.get('detalle'),
-        precio: parseFloat(formData.get('precio')),
-      }),
+      body: JSON.stringify(productoData),
     });
-    if (!res.ok) throw new Error('Error al actualizar el producto');
-    return await res.json();
+    
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.message || 'Error al actualizar el producto');
+    }
+    
+    return data;
   } catch (error) {
-    console.error(error);
+    console.error('Error en updateProducto:', error);
+    throw error;
   }
 }
 
@@ -48,16 +50,25 @@ async function deleteProducto(id) {
     const res = await fetch(`http://localhost:3001/productos/${id}`, {
       method: 'DELETE',
     });
-    if (!res.ok) throw new Error('Error al eliminar el producto');
-    return await res.json();
+    
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.message || 'Error al eliminar el producto');
+    }
+    
+    return data;
   } catch (error) {
-    console.error(error);
+    console.error('Error en deleteProducto:', error);
+    throw error;
   }
 }
 
 export default function AdminProductos() {/*Restringir acceso a ruta admin*/ 
   const [modo, setModo] = useState('añadir');
   const [idProducto, setIdProducto] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -71,25 +82,75 @@ export default function AdminProductos() {/*Restringir acceso a ruta admin*/
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
-    if (modo === 'añadir') {
-      await addProducto(formData);
-    } else if (modo === 'modificar' && idProducto) {
-      await updateProducto(idProducto, formData);
-    } else if (modo === 'eliminar' && idProducto) {
-      await deleteProducto(idProducto);
+    setError('');
+    setSuccess('');
+    
+    try {
+      if (modo === 'añadir' || modo === 'modificar') {
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        
+        // Convert FormData to a plain object
+        const productoData = {
+          nombre_producto: formData.get('nombre_producto'),
+          imagen: formData.get('imagen'),
+          categoria: formData.get('categoria'),
+          detalle: formData.get('detalle'),
+          precio: parseFloat(formData.get('precio')),
+        };
+        
+        if (modo === 'añadir') {
+          await addProducto(productoData);
+          setSuccess('Producto agregado correctamente');
+          form.reset();
+        } else if (modo === 'modificar' && idProducto) {
+          await updateProducto(idProducto, productoData);
+          setSuccess('Producto actualizado correctamente');
+          form.reset();
+        }
+      } else if (modo === 'eliminar' && idProducto) {
+        await deleteProducto(idProducto);
+        setSuccess('Producto eliminado correctamente');
+        setIdProducto('');
+      }
+    } catch (err) {
+      setError(err.message || 'Ha ocurrido un error');
     }
+  };
 
-    form.reset();
-    setIdProducto('');
+  const handleDeleteClick = async () => {
+    setError('');
+    setSuccess('');
+    
+    try {
+      if (idProducto) {
+        await deleteProducto(idProducto);
+        setSuccess('Producto eliminado correctamente');
+        setIdProducto('');
+      } else {
+        setError('Por favor, introduce un ID de producto válido');
+      }
+    } catch (err) {
+      setError(err.message || 'Ha ocurrido un error al eliminar el producto');
+    }
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.formContainer}>
         <h1 className={styles.title}>Administrar Productos</h1>
+        
+        {error && (
+          <div className={`${styles.message} ${styles.error}`}>
+            {error}
+          </div>
+        )}
+        
+        {success && (
+          <div className={`${styles.message} ${styles.success}`}>
+            {success}
+          </div>
+        )}
 
         <select className={styles.select} value={modo} onChange={(e) => setModo(e.target.value)}>
           <option value="añadir">Añadir Producto</option>
@@ -122,7 +183,7 @@ export default function AdminProductos() {/*Restringir acceso a ruta admin*/
         )}
 
         {modo === 'eliminar' && idProducto && (
-          <button onClick={handleSubmit} className={`${styles.button} ${styles.spaceY}`}>
+          <button onClick={handleDeleteClick} className={`${styles.button} ${styles.spaceY}`}>
             Eliminar Producto
           </button>
         )}
@@ -130,7 +191,6 @@ export default function AdminProductos() {/*Restringir acceso a ruta admin*/
     </div>
   );
 }
-
 
 
 
