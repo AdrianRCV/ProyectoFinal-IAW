@@ -8,37 +8,58 @@ import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
 
+  // Función para verificar el estado de autenticación
+  const checkAuthStatus = () => {
+    const token = localStorage.getItem("token");
+    console.log("Verificando token:", token);
+    setIsLoggedIn(!!token);
+  };
+
+  // Verificar al montar el componente y cada vez que obtenga el foco
   useEffect(() => {
-    const updateLoginStatus = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
-    };
-
-    window.addEventListener("storage", updateLoginStatus);
-    window.addEventListener("login", updateLoginStatus);
-    window.addEventListener("logout", updateLoginStatus);
-
-    updateLoginStatus();
-    setIsLoading(false);
-
-    return () => {
-      window.removeEventListener("storage", updateLoginStatus);
-      window.removeEventListener("login", updateLoginStatus);
-      window.removeEventListener("logout", updateLoginStatus);
-    };
+    if (typeof window !== 'undefined') {
+      // Verificar inmediatamente
+      checkAuthStatus();
+      
+      // Verificar cada vez que la ventana obtiene el foco
+      window.addEventListener('focus', checkAuthStatus);
+      
+      // Verificar con un intervalo (como respaldo)
+      const interval = setInterval(checkAuthStatus, 2000);
+      
+      // Configurar oyentes de eventos personalizados
+      window.addEventListener('custom-login', checkAuthStatus);
+      window.addEventListener('custom-logout', checkAuthStatus);
+      
+      // Limpiar
+      return () => {
+        window.removeEventListener('focus', checkAuthStatus);
+        window.removeEventListener('custom-login', checkAuthStatus);
+        window.removeEventListener('custom-logout', checkAuthStatus);
+        clearInterval(interval);
+      };
+    }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.dispatchEvent(new Event('logout'));
+    setIsLoggedIn(false);
+    window.dispatchEvent(new CustomEvent('custom-logout'));
     router.push('/');
   };
 
   const handleLogoClick = () => {
     router.push('/');
   };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  console.log("Estado de autenticación:", isLoggedIn);
 
   return (
     <header className={styles.header}>
@@ -49,8 +70,13 @@ export default function Header() {
       <nav>
         <ul className={styles.navList}>
           <li className={styles.dropdown}>
-            <span className={styles.dropdownTitle}>Productos</span>
-            <ul className={`${styles.dropdownMenu} ${isLoading ? styles.visible : ""}`}>
+            <span 
+              className={styles.dropdownTitle} 
+              onClick={toggleDropdown}
+            >
+              Productos
+            </span>
+            <ul className={`${styles.dropdownMenu} ${dropdownOpen ? styles.visible : ""}`}>
               <li>
                 <Link href="/productos/ordenadores">Ordenadores</Link>
               </li>
@@ -93,4 +119,3 @@ export default function Header() {
     </header>
   );
 }
-
