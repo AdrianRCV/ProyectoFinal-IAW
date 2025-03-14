@@ -7,21 +7,6 @@ export class CarritoProductoController {
 
   @Post(':carritoId/producto/:productoId')
   addProduct(@Param('carritoId') carritoId: number, @Param('productoId') productoId: number, @Body('cantidad') cantidad: number) {
-    return this.carritoProductoService.addProduct(+carritoId, +productoId, cantidad);
-  }
-
-  @Delete(':carritoId/producto/:productoId')
-  removeProduct(@Param('carritoId') carritoId: number, @Param('productoId') productoId: number) {
-    return this.carritoProductoService.removeProduct(+carritoId, +productoId);
-  }
-
-  @Get(':carritoId')
-  findByCarrito(@Param('carritoId') carritoId: number) {
-    return this.carritoProductoService.findByCarrito(+carritoId);
-  }
-
-  @Patch(':carritoId/producto/:productoId')
-  updateQuantity(@Param('carritoId') carritoId: number, @Param('productoId') productoId: number, @Body('cantidad') cantidad: number) {
-    return this.carritoProductoService.updateQuantity(+carritoId, +productoId, cantidad);
+    return this.carritoProductoService.addProductToCarrito(+carritoId, +productoId, cantidad);
   }
 }

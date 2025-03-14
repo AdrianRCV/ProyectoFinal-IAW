@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Button from 'react-bootstrap/Button';
 import styles from '../../page.module.css';
 
-export default function Moviles() {
+export default function Ordenadores() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,7 +14,7 @@ export default function Moviles() {
     const fetchProductos = async () => {
       try {
         setLoading(true);
-        console.log('Iniciando petición a API para móviles...');
+        console.log('Iniciando petición a API para ordenadores...');
         
         const res = await fetch('http://localhost:3001/productos/');
         
@@ -25,21 +25,19 @@ export default function Moviles() {
         const data = await res.json();
         console.log(`Datos recibidos: ${data.length} productos`);
         
-        // Filtrado flexible para móviles
-        const moviles = data.filter(producto => 
+        // Filtrado flexible para ordenadores
+        const ordenadores = data.filter(producto => 
           producto.categoria && 
-          (producto.categoria.toLowerCase().includes('movil') || 
-           producto.categoria.toLowerCase().includes('móvil') ||
-           producto.categoria.toLowerCase().includes('telefono') ||
-           producto.categoria.toLowerCase().includes('teléfono') ||
-           producto.categoria.toLowerCase().includes('smartphone') ||
-           producto.categoria.toLowerCase().includes('celular'))
+          (producto.categoria.toLowerCase().includes('ordenador') || 
+           producto.categoria.toLowerCase().includes('computadora') ||
+           producto.categoria.toLowerCase().includes('laptop') ||
+           producto.categoria.toLowerCase().includes('pc'))
         );
         
-        console.log(`Móviles encontrados: ${moviles.length}`);
-        setProductos(moviles);
+        console.log(`Ordenadores encontrados: ${ordenadores.length}`);
+        setProductos(ordenadores);
       } catch (error) {
-        console.error('Error al obtener móviles:', error);
+        console.error('Error al obtener ordenadores:', error);
         setError(`Error: ${error.message}`);
       } finally {
         setLoading(false);
@@ -62,18 +60,18 @@ export default function Moviles() {
   }
 
   if (loading) {
-    return <div>Cargando móviles...</div>;
+    return <div>Cargando ordenadores...</div>;
   }
 
   if (productos.length === 0) {
-    return <div>No se encontraron móviles disponibles</div>;
+    return <div>No se encontraron ordenadores disponibles</div>;
   }
 
   return (
     <div>
       <div className={styles.cardsContainer}>
         {productos.map((producto) => (
-          <div className={styles.postCard} key={producto.idProducto || `movil-${Math.random()}`}>
+          <div className={styles.postCard} key={producto.idProducto || `ordenador-${Math.random()}`}>
             <h5 className={styles.TituProducto}>{producto.nombre_producto}</h5>
             <img
               src={producto.imagen}
