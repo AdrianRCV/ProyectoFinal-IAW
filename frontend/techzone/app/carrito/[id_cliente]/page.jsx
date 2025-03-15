@@ -104,22 +104,22 @@ export default function CarritoPage({ params }) {
   const handleRemoveProduct = async (idProducto) => {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      if (!token) {
-        throw new Error("No estás autenticado. Por favor, inicia sesión.");
+      if (!token) throw new Error("No estás autenticado. Por favor, inicia sesión.");
+  
+      if (!carrito || !carrito.idCarrito) {
+        throw new Error("No se pudo obtener el ID del carrito.");
       }
 
-      const res = await fetch(`http://localhost:3001/carrito/${id_cliente}/producto/${idProducto}`, {
+      const res = await fetch(`http://localhost:3001/carrito/${carrito.idCarrito}/producto/${idProducto}`, {
         method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
+        headers: { "Authorization": `Bearer ${token}` },
       });
-
+  
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || "Error al eliminar el producto del carrito");
       }
-
+  
       const updatedCarrito = {
         ...carrito,
         productos: carrito.productos.filter(prod => prod.producto.idProducto !== idProducto),
@@ -128,9 +128,7 @@ export default function CarritoPage({ params }) {
     } catch (error) {
       console.error("Error eliminando producto:", error.message);
       setError(error.message);
-      if (error.message.includes("No estás autenticado")) {
-        router.push('/login');
-      }
+      if (error.message.includes("No estás autenticado")) router.push('/login');
     }
   };
 
