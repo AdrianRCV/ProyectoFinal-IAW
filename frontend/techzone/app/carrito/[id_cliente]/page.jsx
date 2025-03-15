@@ -163,19 +163,24 @@ export default function CarritoPage({ params }) {
             </tr>
           </thead>
           <tbody>
-            {carrito.productos.map((carritoProducto) => (
-              <tr key={carritoProducto.producto.idProducto}>
-                <td>{carritoProducto.producto.nombre_producto}</td>
-                <td>{carritoProducto.cantidad}</td>
-                <td>${carritoProducto.producto.precio.toFixed(2)}</td>
-                <td>${(carritoProducto.cantidad * carritoProducto.producto.precio).toFixed(2)}</td>
-                <td>
-                  <button onClick={() => handleRemoveProduct(carritoProducto.producto.idProducto)}>
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {carrito.productos.map((carritoProducto) => {
+              const precio = Number(carritoProducto.producto.precio);
+              const total = precio * carritoProducto.cantidad;
+
+              return (
+                <tr key={carritoProducto.producto.idProducto}>
+                  <td>{carritoProducto.producto.nombre_producto}</td>
+                  <td>{carritoProducto.cantidad}</td>
+                  <td>${!isNaN(precio) ? precio.toFixed(2) : "N/A"}</td>
+                  <td>${!isNaN(total) ? total.toFixed(2) : "N/A"}</td>
+                  <td>
+                    <button onClick={() => handleRemoveProduct(carritoProducto.producto.idProducto)}>
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}
