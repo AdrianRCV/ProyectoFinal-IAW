@@ -5,7 +5,6 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
-import { ProveedoresModule } from './proveedores/proveedores.module';
 import { ProductosModule } from './productos/productos.module';
 import { CarritoModule } from './carrito/carrito.module';
 import { CarritoProductoModule } from './carrito_producto/carrito_producto.module';
@@ -18,7 +17,7 @@ import { CarritoProductoModule } from './carrito_producto/carrito_producto.modul
       type:'mysql',
       host:process.env.URL,
       port:3306,
-      username: 'root',
+      username: 'adrian',
       password:process.env.PASSWORD,
       database: process.env.DBNAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
@@ -26,7 +25,6 @@ import { CarritoProductoModule } from './carrito_producto/carrito_producto.modul
     }),
     AuthModule,
     UsuariosModule,
-    ProveedoresModule,
     ProductosModule,
     CarritoModule,
     CarritoProductoModule,

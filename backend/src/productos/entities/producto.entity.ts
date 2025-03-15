@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Proveedor } from 'src/proveedores/entities/proveedore.entity';
 import { IsNotEmpty, Length, IsDecimal, Min } from 'class-validator';
 
 @Entity('producto')
@@ -34,7 +33,4 @@ export class Producto {
   @IsDecimal({}, { message: 'El precio debe ser un número decimal válido' })
   @Min(0, { message: 'El precio debe ser mayor o igual a 0' })
   precio: number;
-
-  @ManyToOne(() => Proveedor, (proveedor) => proveedor.productos)
-  proveedor: Proveedor;
 }

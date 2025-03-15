@@ -11,7 +11,8 @@ export class CarritoController {
   ) {}
 
   @Post()
-  create(@Body() createCarritoDto: CreateCarritoDto) {
+  async create(@Body() createCarritoDto: CreateCarritoDto) {
+    console.log("Datos recibidos para crear carrito:", createCarritoDto); // Depuración
     return this.carritoService.create(createCarritoDto);
   }
 
@@ -22,13 +23,10 @@ export class CarritoController {
 
   @Get(':id_cliente')
   async findOne(@Param('id_cliente') id_cliente: number) {
-    let carrito = await this.carritoService.findOneByUserId(id_cliente);
-
+    const carrito = await this.carritoService.findOneByUserId(id_cliente);
     if (!carrito) {
-      const createCarritoDto = { usuarioId: id_cliente };
-      carrito = await this.carritoService.create(createCarritoDto);
+      throw new NotFoundException('Carrito no encontrado');
     }
-
     return carrito;
   }
 

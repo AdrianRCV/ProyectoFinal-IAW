@@ -19,31 +19,38 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() body: LoginDto) {
-    try {
-      const user = await this.authService.validateUser(
-        body.username,
-        body.password,
-      );
+async login(@Body() body: LoginDto) {
+  try {
+    const user = await this.authService.validateUser(
+      body.username,
+      body.password,
+    );
 
-      if (!user) {
-        throw new HttpException(
-          'Usuario o contraseña incorrectas',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-
-      const payload = { username: user.username, sub: user.id };
-      const token = this.jwtService.sign(payload);
-
-      return { access_token: token };
-    } catch (error) {
+    if (!user) {
       throw new HttpException(
-        error.message || 'Error iniciando sesion',
+        'Usuario o contraseña incorrectas',
         HttpStatus.UNAUTHORIZED,
       );
     }
+
+    // Asegúrate de incluir el campo id_cliente en el payload
+    const payload = {
+      username: user.username,
+      sub: user.id,
+      id_cliente: user.id_cliente, // Incluye el campo id_cliente
+    };
+
+    // Genera el token con el payload actualizado
+    const token = this.jwtService.sign(payload);
+
+    return { access_token: token };
+  } catch (error) {
+    throw new HttpException(
+      error.message || 'Error iniciando sesion',
+      HttpStatus.UNAUTHORIZED,
+    );
   }
+}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)

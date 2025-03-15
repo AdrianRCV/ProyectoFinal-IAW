@@ -47,7 +47,7 @@ export class AuthService {
     return {
       message: 'Usuario registrado correctamente',
       user: {
-        id: newUser.id_cliente,
+        id_cliente: newUser.id_cliente, // Asegúrate de devolver id_cliente
         username: newUser.username,
         email: newUser.email,
       },
@@ -65,7 +65,11 @@ export class AuthService {
       throw new HttpException('Contraseña incorrecta', HttpStatus.UNAUTHORIZED);
     }
 
-    return { id: user.id_cliente, username: user.username };
+    // Devuelve el id_cliente (o id) en la respuesta
+    return {
+      id_cliente: user.id_cliente, // Asegúrate de devolver id_cliente
+      username: user.username,
+    };
   }
 
   async login(
@@ -74,7 +78,8 @@ export class AuthService {
   ): Promise<{ access_token: string }> {
     const user = await this.validateUser(username, password);
 
-    const payload = { username: user.username, sub: user.id };
+    // Incluye id_cliente en el payload del token
+    const payload = { username: user.username, sub: user.id_cliente };
     return {
       access_token: this.jwtService.sign(payload, { expiresIn: '15m' }),
     };

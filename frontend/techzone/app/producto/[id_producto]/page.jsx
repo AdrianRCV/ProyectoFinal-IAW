@@ -68,24 +68,20 @@ export default function ProductoPage({ params }) {
   }, []);
 
   const handleAddToCart = async () => {
-    // Verificamos si hay token SOLO cuando se intenta añadir al carrito
     const token = localStorage.getItem("token");
     if (!token) {
       alert("No estás autenticado. Por favor, inicia sesión para añadir productos al carrito.");
       router.push('/login');
       return;
     }
-
-    // Si no tenemos carritoId a pesar de tener token, intentamos obtenerlo nuevamente
-    if (!carritoId) {
-      try {
-        const userId = 1;
+  
+    try {
+      if (!carritoId) {
+        const userId = 1; // Reemplaza con el ID del usuario autenticado
         let res = await fetch(`http://localhost:3001/carrito/${userId}`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
+          headers: { "Authorization": `Bearer ${token}` },
         });
-        
+  
         if (res.status === 404) {
           res = await fetch('http://localhost:3001/carrito', {
             method: 'POST',
@@ -95,31 +91,26 @@ export default function ProductoPage({ params }) {
             },
             body: JSON.stringify({ usuarioId: userId }),
           });
-
-          if (!res.ok) {
-            throw new Error('Error al crear el carrito');
-          }
+  
+          if (!res.ok) throw new Error('Error al crear el carrito');
         }
-
+  
         const data = await res.json();
         setCarritoId(data.idCarrito);
-        
-        // Continuamos con la adición del producto usando el carritoId recién obtenido
-        addProductToCart(token, data.idCarrito);
-      } catch (error) {
-        console.error('Error al obtener o crear el carrito:', error);
-        alert("Error al obtener o crear el carrito. Por favor, intenta de nuevo.");
+        await addProductToCart(token, data.idCarrito);
+      } else {
+        await addProductToCart(token, carritoId);
       }
-    } else {
-      // Si ya tenemos el carritoId, simplemente añadimos el producto
-      addProductToCart(token, carritoId);
+    } catch (error) {
+      console.error("Error al añadir al carrito:", error);
+      alert("Error al añadir el producto al carrito. Por favor, intenta de nuevo.");
     }
   };
 
   // Función para añadir el producto al carrito
   const addProductToCart = async (token, cartId) => {
     try {
-      const res = await fetch(`http://localhost:3001/carrito/${cartId}/producto/${id_producto}`, {
+      const res = await fetch(`http://localhost:3001/carrito-producto/${cartId}/producto/${id_producto}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

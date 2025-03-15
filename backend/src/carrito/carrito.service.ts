@@ -22,7 +22,10 @@ export class CarritoService {
   ) {}
 
   async create(createCarritoDto: CreateCarritoDto): Promise<Carrito> {
-    const usuario = await this.userRepository.findOne({ where: { id_cliente: createCarritoDto.usuarioId } });
+    const { usuarioId } = createCarritoDto;
+    console.log("Creando carrito para el usuario:", usuarioId); // Depuración
+
+    const usuario = await this.userRepository.findOne({ where: { id_cliente: usuarioId } });
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
     }

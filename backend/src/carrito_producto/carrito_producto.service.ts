@@ -16,14 +16,25 @@ export class CarritoProductoService {
   async addProductToCarrito(carritoId: number, productoId: number, cantidad: number): Promise<CarritoProducto> {
     const carrito = await this.carritoRepository.findOne({ where: { idCarrito: carritoId } });
     if (!carrito) throw new Error('Carrito no encontrado');
-
+  
     const producto = await this.productoRepository.findOne({ where: { idProducto: productoId } });
     if (!producto) throw new Error('Producto no encontrado');
-
-    const carritoProducto = this.carritoProductoRepository.create({
-      carrito, producto, cantidad, precio: producto.precio * cantidad,
+  
+    // Verificar si el producto ya está en el carrito
+    let carritoProducto = await this.carritoProductoRepository.findOne({
+      where: { carrito: { idCarrito: carritoId }, producto: { idProducto: productoId } },
     });
-
+  
+    if (carritoProducto) {
+      // Si el producto ya está en el carrito, actualiza la cantidad
+      carritoProducto.cantidad += cantidad;
+    } else {
+      // Si el producto no está en el carrito, crea un nuevo registro
+      carritoProducto = this.carritoProductoRepository.create({
+        carrito, producto, cantidad, precio: producto.precio * cantidad,
+      });
+    }
+  
     return this.carritoProductoRepository.save(carritoProducto);
   }
 
