@@ -109,7 +109,7 @@ export default function CarritoPage({ params }) {
       if (!carrito || !carrito.idCarrito) {
         throw new Error("No se pudo obtener el ID del carrito.");
       }
-
+  
       const res = await fetch(`http://localhost:3001/carrito/${carrito.idCarrito}/producto/${idProducto}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` },
@@ -120,11 +120,22 @@ export default function CarritoPage({ params }) {
         throw new Error(errorData.message || "Error al eliminar el producto del carrito");
       }
   
-      const updatedCarrito = {
+      // Actualizar el estado del carrito
+      const updatedProductos = carrito.productos.map(prod => {
+        if (prod.producto.idProducto === idProducto) {
+          if (prod.cantidad > 1) {
+            return { ...prod, cantidad: prod.cantidad - 1 }; // Disminuir la cantidad en 1
+          } else {
+            return null; // Eliminar el producto si la cantidad es 1
+          }
+        }
+        return prod;
+      }).filter(prod => prod !== null); // Filtrar los productos eliminados
+  
+      setCarrito({
         ...carrito,
-        productos: carrito.productos.filter(prod => prod.producto.idProducto !== idProducto),
-      };
-      setCarrito(updatedCarrito);
+        productos: updatedProductos,
+      });
     } catch (error) {
       console.error("Error eliminando producto:", error.message);
       setError(error.message);
