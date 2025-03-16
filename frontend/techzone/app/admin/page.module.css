@@ -1,14 +1,12 @@
-/* Contenedor principal */
 .container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f4f4f4; /* Fondo gris claro */
+    background-color: #f4f4f4; 
     padding: 16px;
 }
 
-/* Título */
 .title {
     font-size: 2rem;
     font-weight: bold;
@@ -17,7 +15,6 @@
     margin-bottom: 20px;
 }
 
-/* Formulario */
 .formContainer {
     background-color: white;
     padding: 24px;
@@ -27,7 +24,6 @@
     max-width: 400px;
 }
 
-/* Inputs y textarea */
 .input {
     display: block;
     width: 100%;
@@ -45,7 +41,6 @@
     box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.3);
 }
 
-/* Select */
 .select {
     display: block;
     width: 100%;
@@ -55,7 +50,7 @@
     border-radius: 6px;
     font-size: 1rem;
     transition: 0.3s ease-in-out;
-    background-color: white;
+    background-color: black;
 }
 
 .select:focus {
@@ -64,7 +59,6 @@
     box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.3);
 }
 
-/* Botón de envío */
 .button {
     width: 100%;
     padding: 12px;
@@ -87,12 +81,10 @@
     background-color: #004494;
 }
 
-/* Espaciado para inputs */
 .spaceY {
     margin-top: 16px;
 }
 
-/* Mensajes de error/éxito */
 .message {
     padding: 12px;
     margin-bottom: 16px;

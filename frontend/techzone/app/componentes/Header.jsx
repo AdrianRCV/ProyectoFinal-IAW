@@ -6,33 +6,68 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+//conseguir el id_cliente a apartir del token
+const decodeToken = (token) => {
+  try {
+    const [header, payload, signature] = token.split('.');
+    const decodedPayload = JSON.parse(atob(payload));
+    if (!decodedPayload.id_cliente) {
+      throw new Error("El token no contiene el ID del usuario (id_cliente).");
+    }
+    return decodedPayload.id_cliente;
+  } catch (error) {
+    console.error("Error decodificando el token:", error);
+    return null;
+  }
+};
+
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [idCliente, setIdCliente] = useState(null); //para almacenar el id_cliente
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
 
+  // Función para verificar el estado de autenticación y obtener el id_cliente
+  const checkAuthStatus = () => {
+    const token = localStorage.getItem("token");
+    console.log("Verificando token:", token);
+    setIsLoggedIn(!!token);
+
+    if (token) {
+      const idCliente = decodeToken(token); 
+      setIdCliente(idCliente); 
+    } else {
+      setIdCliente(null); // Si no hay token, limpiar el id_cliente
+    }
+  };
+
+  // Verificar al montar el componente y cada vez que obtenga el foco
   useEffect(() => {
-    const updateLoginStatus = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
-    };
+    if (typeof window !== 'undefined') {
+      checkAuthStatus();
 
-    window.addEventListener("storage", updateLoginStatus);
-    window.addEventListener("login", updateLoginStatus);
-    window.addEventListener("logout", updateLoginStatus);
+      window.addEventListener('focus', checkAuthStatus);
+      
+      const interval = setInterval(checkAuthStatus, 2000);
+      
+      // Configurar oyentes de eventos personalizados
+      window.addEventListener('custom-login', checkAuthStatus);
+      window.addEventListener('custom-logout', checkAuthStatus);
 
-    updateLoginStatus();
-    setIsLoading(false);
-
-    return () => {
-      window.removeEventListener("storage", updateLoginStatus);
-      window.removeEventListener("login", updateLoginStatus);
-      window.removeEventListener("logout", updateLoginStatus);
-    };
+      return () => {
+        window.removeEventListener('focus', checkAuthStatus);
+        window.removeEventListener('custom-login', checkAuthStatus);
+        window.removeEventListener('custom-logout', checkAuthStatus);
+        clearInterval(interval);
+      };
+    }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.dispatchEvent(new Event('logout'));
+    setIsLoggedIn(false);
+    setIdCliente(null); // Limpiar el id_cliente al cerrar sesión
+    window.dispatchEvent(new CustomEvent('custom-logout'));
     router.push('/');
   };
 
@@ -69,7 +104,8 @@ export default function Header() {
           {isLoggedIn ? (
             <>
               <li>
-                <Link href="/carrito">Carrito</Link>
+                {/* Enlace dinámico al carrito usando el id_cliente */}
+                <Link href={`/carrito/${idCliente}`}>Carrito</Link>
               </li>
               <li>
                 <Link href="/admin">Panel de admin</Link>

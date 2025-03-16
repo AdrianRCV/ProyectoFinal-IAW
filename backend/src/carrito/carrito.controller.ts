@@ -11,7 +11,7 @@ export class CarritoController {
   ) {}
 
   @Post()
-  create(@Body() createCarritoDto: CreateCarritoDto) {
+  async create(@Body() createCarritoDto: CreateCarritoDto) {
     return this.carritoService.create(createCarritoDto);
   }
 
@@ -22,13 +22,8 @@ export class CarritoController {
 
   @Get(':id_cliente')
   async findOne(@Param('id_cliente') id_cliente: number) {
-    let carrito = await this.carritoService.findOneByUserId(id_cliente);
-
-    if (!carrito) {
-      const createCarritoDto = { usuarioId: id_cliente };
-      carrito = await this.carritoService.create(createCarritoDto);
-    }
-
+    const carrito = await this.carritoService.findOneByUserId(id_cliente);
+    if (!carrito) throw new NotFoundException('Carrito no encontrado');
     return carrito;
   }
 
@@ -49,26 +44,21 @@ export class CarritoController {
     @Body() body: { cantidad: number },
   ) {
     const carrito = await this.carritoService.findOneByUserId(carritoId);
-    if (!carrito) {
-      throw new NotFoundException('Carrito no encontrado');
-    }
+    if (!carrito) throw new NotFoundException('Carrito no encontrado');
 
     const producto = await this.carritoProductoService.findProductoById(productoId);
-    if (!producto) {
-      throw new NotFoundException('Producto no encontrado');
-    }
+    if (!producto) throw new NotFoundException('Producto no encontrado');
 
-    await this.carritoProductoService.addProductToCarrito(
-      carritoId,
-      productoId,
-      body.cantidad,
-    );
-
+    await this.carritoProductoService.addProductToCarrito(carritoId, productoId, body.cantidad);
     return { message: 'Producto añadido al carrito correctamente' };
   }
 
   @Delete(':carritoId/producto/:productoId')
-  removeProduct(@Param('carritoId') carritoId: number, @Param('productoId') productoId: number) {
-    return this.carritoService.removeProduct(+carritoId, +productoId);
+  async removeProduct(
+    @Param('carritoId') carritoId: number,
+    @Param('productoId') productoId: number,
+  ) {
+    await this.carritoService.removeProduct(+carritoId, +productoId);
+    return { message: 'Producto eliminado del carrito correctamente' };
   }
 }

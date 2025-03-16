@@ -4,10 +4,25 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '../../page.module.css';
 
+const decodeToken = (token) => {
+  try {
+    const [header, payload, signature] = token.split('.');
+    const decodedPayload = JSON.parse(atob(payload));
+    if (!decodedPayload.id_cliente) {
+      throw new Error("El token no contiene el ID del usuario (id_cliente).");
+    }
+    return decodedPayload.id_cliente;
+  } catch (error) {
+    console.error("Error decodificando el token:", error);
+    return null;
+  }
+};
+
 export default function ProductoPage({ params }) {
   const { id_producto } = React.use(params);
   const [producto, setProducto] = useState(null);
   const [carritoId, setCarritoId] = useState(null);
+  const [cantidad, setCantidad] = useState(1); // Estado para la cantidad
   const router = useRouter();
 
   useEffect(() => {
@@ -26,49 +41,46 @@ export default function ProductoPage({ params }) {
     }
   }, [id_producto]);
 
-  // Intenta obtener el carrito si hay un token disponible
-  useEffect(() => {
-    const fetchCarrito = async () => {
-      const token = localStorage.getItem("token");
-      // Si no hay token, simplemente no obtenemos el carrito
-      // pero permitimos que el usuario vea los detalles del producto
-      if (!token) return;
+  const checkIfProductInCart = async (token, cartId) => {
+    try {
+      const res = await fetch(`http://localhost:3001/carrito/${cartId}`, {
+        headers: { "Authorization": `Bearer ${token}` },
+      });
 
-      try {
-        const userId = 1;
-        let res = await fetch(`http://localhost:3001/carrito/${userId}`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
-        
-        if (res.status === 404) {
-          res = await fetch('http://localhost:3001/carrito', {
-            method: 'POST',
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-            },
-            body: JSON.stringify({ usuarioId: userId }),
-          });
+      if (!res.ok) throw new Error("Error al obtener el carrito");
 
-          if (!res.ok) {
-            throw new Error('Error al crear el carrito');
-          }
-        }
+      const carrito = await res.json();
+      return carrito.productos.some((prod) => prod.producto.idProducto === id_producto);
+    } catch (error) {
+      console.error("Error al verificar el carrito:", error);
+      return false;
+    }
+  };
 
-        const data = await res.json();
-        setCarritoId(data.idCarrito);
-      } catch (error) {
-        console.error('Error al obtener o crear el carrito del usuario:', error);
-      }
-    };
-
-    fetchCarrito();
-  }, []);
+  const addProductToCart = async (token, cartId) => {
+    try {
+      const res = await fetch(`http://localhost:3001/carrito-producto/${cartId}/producto/${id_producto}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          cantidad: cantidad, 
+        }),
+      });
+  
+      if (!res.ok) throw new Error("Error al añadir el producto al carrito");
+  
+      alert("Producto añadido al carrito con éxito!");
+    } catch (error) {
+      console.error("Error al añadir al carrito:", error);
+      alert("Error al añadir el producto al carrito. Por favor, intenta de nuevo.");
+    }
+  };
+  
 
   const handleAddToCart = async () => {
-    // Verificamos si hay token SOLO cuando se intenta añadir al carrito
     const token = localStorage.getItem("token");
     if (!token) {
       alert("No estás autenticado. Por favor, inicia sesión para añadir productos al carrito.");
@@ -76,16 +88,19 @@ export default function ProductoPage({ params }) {
       return;
     }
 
-    // Si no tenemos carritoId a pesar de tener token, intentamos obtenerlo nuevamente
-    if (!carritoId) {
-      try {
-        const userId = 1;
-        let res = await fetch(`http://localhost:3001/carrito/${userId}`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
+    const id_cliente = decodeToken(token);
+    if (!id_cliente) {
+      alert("Error al obtener el ID del usuario. Por favor, inicia sesión nuevamente.");
+      router.push('/login');
+      return;
+    }
+
+    try {
+      if (!carritoId) {
+        let res = await fetch(`http://localhost:3001/carrito/${id_cliente}`, {
+          headers: { "Authorization": `Bearer ${token}` },
         });
-        
+
         if (res.status === 404) {
           res = await fetch('http://localhost:3001/carrito', {
             method: 'POST',
@@ -93,45 +108,23 @@ export default function ProductoPage({ params }) {
               "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`,
             },
-            body: JSON.stringify({ usuarioId: userId }),
+            body: JSON.stringify({ usuarioId: id_cliente }),
           });
 
-          if (!res.ok) {
-            throw new Error('Error al crear el carrito');
-          }
+          if (!res.ok) throw new Error('Error al crear el carrito');
         }
 
         const data = await res.json();
         setCarritoId(data.idCarrito);
-        
-        // Continuamos con la adición del producto usando el carritoId recién obtenido
-        addProductToCart(token, data.idCarrito);
-      } catch (error) {
-        console.error('Error al obtener o crear el carrito:', error);
-        alert("Error al obtener o crear el carrito. Por favor, intenta de nuevo.");
+        await addProductToCart(token, data.idCarrito);
+      } else {
+        const productInCart = await checkIfProductInCart(token, carritoId);
+        if (productInCart) {
+          alert("Este producto ya está en tu carrito.");
+        } else {
+          await addProductToCart(token, carritoId);
+        }
       }
-    } else {
-      // Si ya tenemos el carritoId, simplemente añadimos el producto
-      addProductToCart(token, carritoId);
-    }
-  };
-
-  // Función para añadir el producto al carrito
-  const addProductToCart = async (token, cartId) => {
-    try {
-      const res = await fetch(`http://localhost:3001/carrito/${cartId}/producto/${id_producto}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          cantidad: 1,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Error al añadir el producto al carrito");
-      router.push(`/carrito/${cartId}`);
     } catch (error) {
       console.error("Error al añadir al carrito:", error);
       alert("Error al añadir el producto al carrito. Por favor, intenta de nuevo.");
@@ -150,7 +143,12 @@ export default function ProductoPage({ params }) {
         <p><strong>Categoría:</strong> {producto.categoria}</p>
         <p><strong>Detalle:</strong> {producto.detalle}</p>
         <p><strong>Precio:</strong> ${producto.precio}</p>
-        <p><strong>Proveedor:</strong> {producto.proveedor}</p>
+        
+        <div className={styles.cantidadContainer}>
+          <label htmlFor="cantidad">Cantidad:</label>
+          <input type="number" id="cantidad" name="cantidad" min="1" value={cantidad} onChange={(e) => setCantidad(Number(e.target.value))} className={styles.cantidadInput}/>
+        </div>
+  
         <button className={styles.botonCarrito} onClick={handleAddToCart}>
           Añadir al carrito
         </button>

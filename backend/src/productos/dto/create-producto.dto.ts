@@ -24,7 +24,4 @@ export class CreateProductoDto {
 
   @Min(0, { message: 'El precio debe ser mayor o igual a 0' })
   precio: number;
-
-  @IsOptional()
-  proveedor: string;
 }

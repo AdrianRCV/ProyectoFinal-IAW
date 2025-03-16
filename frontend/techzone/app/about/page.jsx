@@ -1,4 +1,3 @@
-// pages/about.js
 import Image from 'next/image';
 import styles from "../nosotros/page.module.css"
 

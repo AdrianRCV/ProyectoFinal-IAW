@@ -18,16 +18,9 @@ export class ProductosController {
   async create(
     @Body() createProductoDto: CreateProductoDto,
   ): Promise<Producto> {
-    const { nombre_producto, imagen, categoria, detalle, precio, proveedor } =
+    const { nombre_producto, imagen, categoria, detalle, precio } =
       createProductoDto;
-    return this.productosService.createProducto({
-      nombre_producto,
-      imagen,
-      categoria,
-      detalle,
-      precio,
-      proveedor,
-    });
+    return this.productosService.createProducto({nombre_producto,imagen,categoria,detalle,precio,});
   }
 
   @Get(':id')

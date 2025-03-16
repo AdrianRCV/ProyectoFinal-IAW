@@ -18,5 +18,5 @@ export class CreateCarritoProductoDto {
   precio: number;
 
   @IsOptional()
-  fechaAgregado?: Date; // Opcional, ya que TypeORM lo genera automáticamente
+  fechaAgregado?: Date; // Opcional ya que TypeORM lo genera automáticamente
 }
