@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, Length, IsDecimal, Min } from 'class-validator';
 
 @Entity('producto')

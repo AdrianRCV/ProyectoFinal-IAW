@@ -27,25 +27,27 @@ export class UsuariosService {
   }
 
   async findOneById(id_cliente: string): Promise<User> {
-    const id = Number(id_cliente);                                    // Convierte a número
+    const id = Number(id_cliente); // Convierte a número
     if (isNaN(id)) {
       throw new NotFoundException(`El id_cliente proporcionado no es válido`);
     }
-  
-    const user = await this.userRepository.findOne({ where: { id_cliente: id } });
+
+    const user = await this.userRepository.findOne({
+      where: { id_cliente: id },
+    });
     if (!user) {
       throw new NotFoundException(`Usuario con id_cliente ${id} no encontrado`);
     }
     return user;
   }
-  
+
   async remove(id_cliente: string): Promise<void> {
-    const id = Number(id_cliente);                                             
+    const id = Number(id_cliente);
     if (isNaN(id)) {
       throw new NotFoundException(`El id_cliente proporcionado no es válido`);
     }
-  
-    const user = await this.findOneById(id_cliente); 
+
+    const user = await this.findOneById(id_cliente);
     await this.userRepository.remove(user);
   }
 }

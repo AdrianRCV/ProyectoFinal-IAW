@@ -85,8 +85,8 @@ export default function Header() {
         <ul className={styles.navList}>
           <li className={styles.dropdown}>
             <span className={styles.dropdownTitle}>Productos</span>
-            <ul className={`${styles.dropdownMenu} ${isLoading ? styles.visible : ""}`}>
-              <li>
+            <ul className={`${styles.dropdownMenu} ${dropdownOpen ? styles.visible : ""}`}>
+            <li>
                 <Link href="/productos/ordenadores">Ordenadores</Link>
               </li>
               <li>

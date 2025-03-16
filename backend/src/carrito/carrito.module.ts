@@ -10,7 +10,13 @@ import { ProductosModule } from 'src/productos/productos.module';
 import { CarritoProductoService } from 'src/carrito_producto/carrito_producto.service';
 
 @Module({
-  imports: [ProductosModule,TypeOrmModule.forFeature([Carrito, User, Producto, CarritoProducto], 'base1')],
+  imports: [
+    ProductosModule,
+    TypeOrmModule.forFeature(
+      [Carrito, User, Producto, CarritoProducto],
+      'base1',
+    ),
+  ],
   controllers: [CarritoController],
   providers: [CarritoService, CarritoProductoService],
 })

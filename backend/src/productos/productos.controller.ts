@@ -1,4 +1,11 @@
-import {Controller,Get,Post,Body,Put,Param,Delete,
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
@@ -20,7 +27,13 @@ export class ProductosController {
   ): Promise<Producto> {
     const { nombre_producto, imagen, categoria, detalle, precio } =
       createProductoDto;
-    return this.productosService.createProducto({nombre_producto,imagen,categoria,detalle,precio,});
+    return this.productosService.createProducto({
+      nombre_producto,
+      imagen,
+      categoria,
+      detalle,
+      precio,
+    });
   }
 
   @Get(':id')

@@ -12,15 +12,18 @@ import { PassportModule } from '@nestjs/passport';
   imports: [
     TypeOrmModule.forFeature([User], 'base1'),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.registerAsync({imports: [ConfigModule], inject: [ConfigService], useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'your_secret_key', 
-        signOptions: { expiresIn: '15m' }, 
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') || 'your_secret_key',
+        signOptions: { expiresIn: '15m' },
       }),
     }),
     ConfigModule.forRoot(),
   ],
-  controllers: [AuthController], 
-  providers: [AuthService, JwtStrategy], 
-  exports: [AuthService], 
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}

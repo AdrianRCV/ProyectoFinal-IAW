@@ -1,4 +1,13 @@
-import { Controller, Post, Get, Param, Body, Patch, Delete, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Body,
+  Patch,
+  Delete,
+  NotFoundException,
+} from '@nestjs/common';
 import { CarritoService } from './carrito.service';
 import { CarritoProductoService } from 'src/carrito_producto/carrito_producto.service';
 import { CreateCarritoDto } from './dto/create-carrito.dto';
@@ -28,7 +37,10 @@ export class CarritoController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateCarritoDto: Partial<CreateCarritoDto>) {
+  update(
+    @Param('id') id: number,
+    @Body() updateCarritoDto: Partial<CreateCarritoDto>,
+  ) {
     return this.carritoService.update(+id, updateCarritoDto);
   }
 
@@ -46,10 +58,15 @@ export class CarritoController {
     const carrito = await this.carritoService.findOneByUserId(carritoId);
     if (!carrito) throw new NotFoundException('Carrito no encontrado');
 
-    const producto = await this.carritoProductoService.findProductoById(productoId);
+    const producto =
+      await this.carritoProductoService.findProductoById(productoId);
     if (!producto) throw new NotFoundException('Producto no encontrado');
 
-    await this.carritoProductoService.addProductToCarrito(carritoId, productoId, body.cantidad);
+    await this.carritoProductoService.addProductToCarrito(
+      carritoId,
+      productoId,
+      body.cantidad,
+    );
     return { message: 'Producto añadido al carrito correctamente' };
   }
 

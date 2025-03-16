@@ -5,6 +5,6 @@ export class CreateCarritoDto {
   @IsPositive({ message: 'El ID del usuario debe ser positivo' })
   usuarioId: number;
 
-  @IsOptional() 
+  @IsOptional()
   fechaCreacion?: Date;
 }
