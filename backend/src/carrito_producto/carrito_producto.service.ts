@@ -26,10 +26,8 @@ export class CarritoProductoService {
     });
   
     if (carritoProducto) {
-      // Si el producto ya está en el carrito, actualiza la cantidad
       carritoProducto.cantidad += cantidad;
     } else {
-      // Si el producto no está en el carrito, crea un nuevo registro
       carritoProducto = this.carritoProductoRepository.create({
         carrito, producto, cantidad, precio: producto.precio * cantidad,
       });

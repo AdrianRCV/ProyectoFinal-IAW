@@ -81,10 +81,7 @@ export class CarritoService {
   }
 
   async removeProduct(carritoId: number, productoId: number): Promise<void> {
-    console.log("ID del carrito:", carritoId);
-    console.log("ID del producto:", productoId);
   
-    // Buscar el producto en el carrito
     const carritoProducto = await this.carritoProductoRepository.findOne({
       where: { carrito: { idCarrito: carritoId }, producto: { idProducto: productoId } },
       relations: ['carrito', 'producto'],
@@ -95,11 +92,9 @@ export class CarritoService {
     }
   
     if (carritoProducto.cantidad > 1) {
-      // Si hay más de un producto, disminuir la cantidad en 1
       carritoProducto.cantidad -= 1;
       await this.carritoProductoRepository.save(carritoProducto); // Guardar la cantidad actualizada
     } else {
-      // Si solo hay un producto, eliminarlo por completo
       await this.carritoProductoRepository.remove(carritoProducto);
     }
   }

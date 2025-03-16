@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-// Función para decodificar el token JWT y obtener el id_cliente
+//conseguir el id_cliente a apartir del token
 const decodeToken = (token) => {
   try {
     const [header, payload, signature] = token.split('.');
@@ -23,7 +23,7 @@ const decodeToken = (token) => {
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [idCliente, setIdCliente] = useState(null); // Estado para almacenar el id_cliente
+  const [idCliente, setIdCliente] = useState(null); //para almacenar el id_cliente
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
 
@@ -34,8 +34,8 @@ export default function Header() {
     setIsLoggedIn(!!token);
 
     if (token) {
-      const idCliente = decodeToken(token); // Decodificar el token para obtener el id_cliente
-      setIdCliente(idCliente); // Guardar el id_cliente en el estado
+      const idCliente = decodeToken(token); 
+      setIdCliente(idCliente); 
     } else {
       setIdCliente(null); // Si no hay token, limpiar el id_cliente
     }
@@ -44,20 +44,16 @@ export default function Header() {
   // Verificar al montar el componente y cada vez que obtenga el foco
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Verificar inmediatamente
       checkAuthStatus();
-      
-      // Verificar cada vez que la ventana obtiene el foco
+
       window.addEventListener('focus', checkAuthStatus);
       
-      // Verificar con un intervalo (como respaldo)
       const interval = setInterval(checkAuthStatus, 2000);
       
       // Configurar oyentes de eventos personalizados
       window.addEventListener('custom-login', checkAuthStatus);
       window.addEventListener('custom-logout', checkAuthStatus);
-      
-      // Limpiar
+
       return () => {
         window.removeEventListener('focus', checkAuthStatus);
         window.removeEventListener('custom-login', checkAuthStatus);

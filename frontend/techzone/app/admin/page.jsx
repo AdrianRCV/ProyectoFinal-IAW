@@ -47,9 +47,7 @@ async function updateProducto(id, productoData) {
 
 async function deleteProducto(id) {
   try {
-    const res = await fetch(`http://localhost:3001/productos/${id}`, {
-      method: 'DELETE',
-    });
+    const res = await fetch(`http://localhost:3001/productos/${id}`, {method: 'DELETE',});
 
     if (!res.ok) {
       throw new Error('Error al eliminar el producto');
@@ -160,14 +158,7 @@ export default function AdminProductos() {/*Restringir acceso a ruta admin*/
         </select>
 
         {(modo === 'modificar' || modo === 'eliminar') && (
-          <input
-            type="number"
-            placeholder="ID del producto"
-            className={styles.input}
-            value={idProducto}
-            onChange={(e) => setIdProducto(e.target.value)}
-            required
-          />
+          <input type="number" placeholder="ID del producto" className={styles.input} value={idProducto} onChange={(e) => setIdProducto(e.target.value)} required/>
         )}
 
         {modo !== 'eliminar' && (
@@ -192,6 +183,3 @@ export default function AdminProductos() {/*Restringir acceso a ruta admin*/
     </div>
   );
 }
-
-
-

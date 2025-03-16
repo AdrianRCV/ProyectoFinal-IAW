@@ -10,27 +10,17 @@ import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
-    // Configura TypeOrm para usar la entidad User en la conexión 'base1'
     TypeOrmModule.forFeature([User], 'base1'),
-
-    // Configura PassportModule con la estrategia por defecto 'jwt'
     PassportModule.register({ defaultStrategy: 'jwt' }),
-
-    // Configura JwtModule de manera asíncrona usando ConfigService
-    JwtModule.registerAsync({
-      imports: [ConfigModule], // Importa ConfigModule para usar ConfigService
-      inject: [ConfigService], // Inyecta ConfigService
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'your_secret_key', // Usa JWT_SECRET del entorno
-        signOptions: { expiresIn: '15m' }, // Configura la expiración del token
+    JwtModule.registerAsync({imports: [ConfigModule], inject: [ConfigService], useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') || 'your_secret_key', 
+        signOptions: { expiresIn: '15m' }, 
       }),
     }),
-
-    // Configura ConfigModule para cargar variables de entorno
     ConfigModule.forRoot(),
   ],
-  controllers: [AuthController], // Registra el controlador de autenticación
-  providers: [AuthService, JwtStrategy], // Registra los servicios y estrategias
-  exports: [AuthService], // Exporta AuthService para su uso en otros módulos
+  controllers: [AuthController], 
+  providers: [AuthService, JwtStrategy], 
+  exports: [AuthService], 
 })
 export class AuthModule {}

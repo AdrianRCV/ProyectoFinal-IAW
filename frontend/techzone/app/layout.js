@@ -5,12 +5,13 @@ import Footer from "./componentes/Footer";
 export default function RootLayout({ children }) {
   return (
     <html>
-      <body>
+      <body className="flex flex-col min-h-screen">
         <Header />
-        {children}
+        <main className="flex-grow">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
   );
 }
-

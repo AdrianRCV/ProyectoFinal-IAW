@@ -76,11 +76,11 @@ export default function CarritoPage({ params }) {
   };
 
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;//para conseguir el token
     console.log("Token almacenado:", token);
 
     if (token) {
-      const idCliente = decodeToken(token);
+      const idCliente = decodeToken(token);//consigue el id del cliente del token
       console.log("ID del cliente desde el token:", idCliente);
 
       if (!idCliente) {
@@ -124,9 +124,9 @@ export default function CarritoPage({ params }) {
       const updatedProductos = carrito.productos.map(prod => {
         if (prod.producto.idProducto === idProducto) {
           if (prod.cantidad > 1) {
-            return { ...prod, cantidad: prod.cantidad - 1 }; // Disminuir la cantidad en 1
+            return { ...prod, cantidad: prod.cantidad - 1 }; 
           } else {
-            return null; // Eliminar el producto si la cantidad es 1
+            return null; 
           }
         }
         return prod;
@@ -163,7 +163,6 @@ export default function CarritoPage({ params }) {
     }, 0);
   };
   
-  // Dentro del componente CarritoPage
   return (
     <div className={styles.ContCarrito}>
       <h1>Carrito de Compras</h1>
@@ -171,7 +170,7 @@ export default function CarritoPage({ params }) {
         <p>Tu carrito está vacío</p>
       ) : (
         <>
-          <table>
+          <table className={styles.TableCarrito}>
             <thead>
               <tr>
                 <th>Producto</th>
@@ -202,11 +201,11 @@ export default function CarritoPage({ params }) {
               })}
             </tbody>
           </table>
-          {/* Mostrar el total del carrito */}
           <div className={styles.totalCarrito}>
             <h3>Total del Carrito: ${calcularTotalCarrito(carrito.productos).toFixed(2)}</h3>
           </div>
         </>
       )}
     </div>
-  );}
+  );
+}

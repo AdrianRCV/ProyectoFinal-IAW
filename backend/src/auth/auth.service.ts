@@ -13,11 +13,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(
-    username: string,
-    email: string,
-    password: string,
-  ): Promise<any> {
+  async register(username: string, email: string, password: string): Promise<any> {
     const existingUser = await this.userRepository.findOne({
       where: { username },
     });
@@ -36,20 +32,18 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = this.userRepository.create({
-      username,
-      email,
-      password: hashedPassword,
-    });
 
+    const newUser = this.userRepository.create({username,email,password: hashedPassword,});
     await this.userRepository.save(newUser);
+
+    const payload = { username: newUser.username, id_cliente: newUser.id_cliente };
+    
+    const token = this.jwtService.sign(payload);
 
     return {
       message: 'Usuario registrado correctamente',
-      user: {
-        id_cliente: newUser.id_cliente, // Asegúrate de devolver id_cliente
-        username: newUser.username,
-        email: newUser.email,
+      access_token: token, 
+      user: {id_cliente: newUser.id_cliente,username: newUser.username,email: newUser.email,
       },
     };
   }
@@ -65,20 +59,13 @@ export class AuthService {
       throw new HttpException('Contraseña incorrecta', HttpStatus.UNAUTHORIZED);
     }
 
-    // Devuelve el id_cliente (o id) en la respuesta
-    return {
-      id_cliente: user.id_cliente, // Asegúrate de devolver id_cliente
-      username: user.username,
+    return {id_cliente: user.id_cliente,username: user.username,
     };
   }
 
-  async login(
-    username: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
+  async login(username: string,password: string,): Promise<{ access_token: string }> {
     const user = await this.validateUser(username, password);
 
-    // Incluye id_cliente en el payload del token
     const payload = { username: user.username, sub: user.id_cliente };
     return {
       access_token: this.jwtService.sign(payload, { expiresIn: '15m' }),

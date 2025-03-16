@@ -22,6 +22,7 @@ export default function ProductoPage({ params }) {
   const { id_producto } = React.use(params);
   const [producto, setProducto] = useState(null);
   const [carritoId, setCarritoId] = useState(null);
+  const [cantidad, setCantidad] = useState(1); // Estado para la cantidad
   const router = useRouter();
 
   useEffect(() => {
@@ -65,17 +66,19 @@ export default function ProductoPage({ params }) {
           "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
-          cantidad: 1,
+          cantidad: cantidad, 
         }),
       });
-
+  
       if (!res.ok) throw new Error("Error al añadir el producto al carrito");
-      router.push(`/carrito/${cartId}`);
+  
+      alert("Producto añadido al carrito con éxito!");
     } catch (error) {
       console.error("Error al añadir al carrito:", error);
       alert("Error al añadir el producto al carrito. Por favor, intenta de nuevo.");
     }
   };
+  
 
   const handleAddToCart = async () => {
     const token = localStorage.getItem("token");
@@ -140,7 +143,12 @@ export default function ProductoPage({ params }) {
         <p><strong>Categoría:</strong> {producto.categoria}</p>
         <p><strong>Detalle:</strong> {producto.detalle}</p>
         <p><strong>Precio:</strong> ${producto.precio}</p>
-        <p><strong>Proveedor:</strong> {producto.proveedor}</p>
+        
+        <div className={styles.cantidadContainer}>
+          <label htmlFor="cantidad">Cantidad:</label>
+          <input type="number" id="cantidad" name="cantidad" min="1" value={cantidad} onChange={(e) => setCantidad(Number(e.target.value))} className={styles.cantidadInput}/>
+        </div>
+  
         <button className={styles.botonCarrito} onClick={handleAddToCart}>
           Añadir al carrito
         </button>
