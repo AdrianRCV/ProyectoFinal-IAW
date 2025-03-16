@@ -155,44 +155,58 @@ export default function CarritoPage({ params }) {
     return <p>No se pudo cargar el carrito.</p>;
   }
 
+  const calcularTotalCarrito = (productos) => {
+    return productos.reduce((total, carritoProducto) => {
+      const precio = Number(carritoProducto.producto.precio);
+      const cantidad = Number(carritoProducto.cantidad);
+      return total + (precio * cantidad);
+    }, 0);
+  };
+  
+  // Dentro del componente CarritoPage
   return (
     <div className={styles.ContCarrito}>
       <h1>Carrito de Compras</h1>
       {carrito.productos.length === 0 ? (
         <p>Tu carrito está vacío</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Precio Unitario</th>
-              <th>Total</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {carrito.productos.map((carritoProducto) => {
-              const precio = Number(carritoProducto.producto.precio);
-              const total = precio * carritoProducto.cantidad;
-
-              return (
-                <tr key={carritoProducto.producto.idProducto}>
-                  <td>{carritoProducto.producto.nombre_producto}</td>
-                  <td>{carritoProducto.cantidad}</td>
-                  <td>${!isNaN(precio) ? precio.toFixed(2) : "N/A"}</td>
-                  <td>${!isNaN(total) ? total.toFixed(2) : "N/A"}</td>
-                  <td>
-                    <button onClick={() => handleRemoveProduct(carritoProducto.producto.idProducto)}>
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <>
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Total</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {carrito.productos.map((carritoProducto) => {
+                const precio = Number(carritoProducto.producto.precio);
+                const total = precio * carritoProducto.cantidad;
+  
+                return (
+                  <tr key={carritoProducto.producto.idProducto}>
+                    <td>{carritoProducto.producto.nombre_producto}</td>
+                    <td>{carritoProducto.cantidad}</td>
+                    <td>${!isNaN(precio) ? precio.toFixed(2) : "N/A"}</td>
+                    <td>${!isNaN(total) ? total.toFixed(2) : "N/A"}</td>
+                    <td>
+                      <button onClick={() => handleRemoveProduct(carritoProducto.producto.idProducto)}>
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {/* Mostrar el total del carrito */}
+          <div className={styles.totalCarrito}>
+            <h3>Total del Carrito: ${calcularTotalCarrito(carrito.productos).toFixed(2)}</h3>
+          </div>
+        </>
       )}
     </div>
-  );
-}
+  );}

@@ -6,16 +6,39 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+// Función para decodificar el token JWT y obtener el id_cliente
+const decodeToken = (token) => {
+  try {
+    const [header, payload, signature] = token.split('.');
+    const decodedPayload = JSON.parse(atob(payload));
+    if (!decodedPayload.id_cliente) {
+      throw new Error("El token no contiene el ID del usuario (id_cliente).");
+    }
+    return decodedPayload.id_cliente;
+  } catch (error) {
+    console.error("Error decodificando el token:", error);
+    return null;
+  }
+};
+
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [idCliente, setIdCliente] = useState(null); // Estado para almacenar el id_cliente
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
 
-  // Función para verificar el estado de autenticación
+  // Función para verificar el estado de autenticación y obtener el id_cliente
   const checkAuthStatus = () => {
     const token = localStorage.getItem("token");
     console.log("Verificando token:", token);
     setIsLoggedIn(!!token);
+
+    if (token) {
+      const idCliente = decodeToken(token); // Decodificar el token para obtener el id_cliente
+      setIdCliente(idCliente); // Guardar el id_cliente en el estado
+    } else {
+      setIdCliente(null); // Si no hay token, limpiar el id_cliente
+    }
   };
 
   // Verificar al montar el componente y cada vez que obtenga el foco
@@ -47,6 +70,7 @@ export default function Header() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
+    setIdCliente(null); // Limpiar el id_cliente al cerrar sesión
     window.dispatchEvent(new CustomEvent('custom-logout'));
     router.push('/');
   };
@@ -95,7 +119,8 @@ export default function Header() {
           {isLoggedIn ? (
             <>
               <li>
-                <Link href="/carrito">Carrito</Link>
+                {/* Enlace dinámico al carrito usando el id_cliente */}
+                <Link href={`/carrito/${idCliente}`}>Carrito</Link>
               </li>
               <li>
                 <Link href="/admin">Panel de admin</Link>
