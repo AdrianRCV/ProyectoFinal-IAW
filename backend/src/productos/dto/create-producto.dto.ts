@@ -1,4 +1,4 @@
-import { IsNotEmpty, Length, Min, IsOptional } from 'class-validator';
+import { IsNotEmpty, Length, Min } from 'class-validator';
 import { Column } from 'typeorm';
 
 export class CreateProductoDto {

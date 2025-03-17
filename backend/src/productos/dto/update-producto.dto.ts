@@ -1,11 +1,13 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateProductoDto } from './create-producto.dto';
-import { IsOptional, IsString, IsDecimal, Min, Length } from 'class-validator';
+import { IsOptional, IsString, Min, Length } from 'class-validator';
 
 export class UpdateProductoDto extends PartialType(CreateProductoDto) {
- @IsOptional()
+  @IsOptional()
   @IsString()
-  @Length(1, 50, { message: 'El nombre del producto debe tener entre 1 y 50 caracteres' })
+  @Length(1, 50, {
+    message: 'El nombre del producto debe tener entre 1 y 50 caracteres',
+  })
   nombre_producto?: string;
 
   @IsOptional()
