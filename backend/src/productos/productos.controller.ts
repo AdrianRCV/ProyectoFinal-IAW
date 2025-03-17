@@ -6,6 +6,7 @@ import {
   Put,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
@@ -19,6 +20,11 @@ export class ProductosController {
   @Get()
   async findAll(): Promise<Producto[]> {
     return this.productosService.findAll();
+  }
+
+  @Get('search')
+  async search(@Query('q') query: string): Promise<Producto[]> {
+    return this.productosService.search(query);
   }
 
   @Post()

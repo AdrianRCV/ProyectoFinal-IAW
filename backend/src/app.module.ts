@@ -16,7 +16,7 @@ import { CarritoProductoModule } from './carrito_producto/carrito_producto.modul
       name: 'base1',
       type: 'mysql',
       host: process.env.URL,
-      port: 17985,
+      port: 11199,
       username: 'luisremoto',
       password: process.env.PASSWORD,
       database: process.env.DBNAME,
