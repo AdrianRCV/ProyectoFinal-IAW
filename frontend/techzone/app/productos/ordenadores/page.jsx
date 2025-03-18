@@ -25,13 +25,9 @@ export default function Ordenadores() {
         const data = await res.json();
         console.log(`Datos recibidos: ${data.length} productos`);
         
-        // Filtrado flexible para ordenadores
         const ordenadores = data.filter(producto => 
           producto.categoria && 
-          (producto.categoria.toLowerCase().includes('ordenador') || 
-           producto.categoria.toLowerCase().includes('computadora') ||
-           producto.categoria.toLowerCase().includes('laptop') ||
-           producto.categoria.toLowerCase().includes('pc'))
+          (producto.categoria.toLowerCase().includes('pc'))
         );
         
         console.log(`Ordenadores encontrados: ${ordenadores.length}`);

@@ -24,13 +24,10 @@ export default function Tablets() {
         
         const data = await res.json();
         console.log(`Datos recibidos: ${data.length} productos`);
-        
-        // Filtrado flexible para tablets
+
         const tablets = data.filter(producto => 
           producto.categoria && 
-          (producto.categoria.toLowerCase().includes('tablet') || 
-           producto.categoria.toLowerCase().includes('ipad') ||
-           producto.categoria.toLowerCase().includes('tableta'))
+          (producto.categoria.toLowerCase().includes('tablet'))
         );
         
         console.log(`Tablets encontradas: ${tablets.length}`);

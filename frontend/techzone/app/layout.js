@@ -1,7 +1,6 @@
 import "./globals.css";
 import Header from "./componentes/Header";
 import Footer from "./componentes/Footer";
-import SearchBar from "./componentes/SearchBar";
 
 export default function RootLayout({ children }) {
   return (

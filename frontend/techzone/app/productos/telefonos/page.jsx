@@ -25,15 +25,9 @@ export default function Moviles() {
         const data = await res.json();
         console.log(`Datos recibidos: ${data.length} productos`);
         
-        // Filtrado flexible para móviles
         const moviles = data.filter(producto => 
           producto.categoria && 
-          (producto.categoria.toLowerCase().includes('movil') || 
-           producto.categoria.toLowerCase().includes('móvil') ||
-           producto.categoria.toLowerCase().includes('telefono') ||
-           producto.categoria.toLowerCase().includes('teléfono') ||
-           producto.categoria.toLowerCase().includes('smartphone') ||
-           producto.categoria.toLowerCase().includes('celular'))
+          (producto.categoria.toLowerCase().includes('movil'))
         );
         
         console.log(`Móviles encontrados: ${moviles.length}`);
