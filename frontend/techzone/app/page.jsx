@@ -1,18 +1,22 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 import Button from 'react-bootstrap/Button';
 import styles from './page.module.css';
+import SearchBar from './componentes/SearchBar'; 
 
 export default function Productos() {
-  const [productos, setProductos] = useState([]); 
+  const [productos, setProductos] = useState([]); // Todos los productos
+  const [filteredProductos, setFilteredProductos] = useState([]); // Productos filtrados
   const router = useRouter();
 
+  // Cargar todos los productos al inicio
   const fetchProductos = async () => {
     try {
       const res = await fetch('http://localhost:3001/productos/');
       const data = await res.json();
       setProductos(data);
+      setFilteredProductos(data); // mostrar todos los productos
     } catch (error) {
       console.error('Error al obtener productos:', error);
     }
@@ -22,22 +26,39 @@ export default function Productos() {
     fetchProductos();
   }, []);
 
-  const handleSeeMore = (producto) => {
-    console.log("Producto seleccionado:", producto); 
-    if (producto && producto.idProducto) { 
-      router.push(`/producto/${producto.idProducto}`); 
+  //búsqueda
+  const handleSearch = async (query) => {
+    if (query) {
+      try {
+        const res = await fetch(`http://localhost:3001/productos/search?q=${query}`);
+        const data = await res.json();
+        setFilteredProductos(data); //actualiza con los productos filtrados insertados en el buscador
+      } catch (error) {
+        console.error('Error al buscar productos:', error);
+      }
     } else {
-      console.error("Producto sin idProducto:", producto); 
+      setFilteredProductos(productos); // en caso de que no haya nada en el buscador muestra todos los productos
+    }
+  };
+
+  const handleSeeMore = (producto) => {
+    console.log("Producto seleccionado:", producto);
+    if (producto && producto.idProducto) {
+      router.push(`/producto/${producto.idProducto}`);
+    } else {
+      console.error("Producto sin idProducto:", producto);
     }
   };
 
   return (
     <div>
-      {productos.length > 0 ? (
+      <SearchBar onSearch={handleSearch} />
+
+      {filteredProductos.length > 0 ? (
         <div className={styles.cardsContainer}>
-          {productos.map((producto, index) => (
+          {filteredProductos.map((producto, index) => (
             <div className={styles.postCard} key={index}>
-            <h5 className={styles.TituProducto}>{producto.nombre_producto}</h5>
+              <h5 className={styles.TituProducto}>{producto.nombre_producto}</h5>
               <img
                 src={producto.imagen}
                 alt={producto.nombre_producto}
@@ -52,7 +73,7 @@ export default function Productos() {
           ))}
         </div>
       ) : (
-        <p>Cargando productos...</p>
+        <p>No se encontraron productos.</p>
       )}
     </div>
   );

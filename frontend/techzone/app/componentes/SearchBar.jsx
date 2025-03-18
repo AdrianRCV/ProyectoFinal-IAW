@@ -1,23 +1,24 @@
-'use client'
+'use client';
 import { useState } from "react";
 
 export default function SearchBar({ onSearch }) {
   const [query, setQuery] = useState("");
 
-  const handleSearch = () => {
-    if (onSearch) onSearch(query);
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    if (onSearch) onSearch(value); // Llama a onSearch cada vez que el usuario escribe
   };
 
   return (
-    <div style={{ display: 'flex', gap: '8px' }}>
+    <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
       <input
         type="text"
         placeholder="Buscar productos..."
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={handleSearch}
         style={{ flex: 1, padding: '8px' }}
       />
-      <button onClick={handleSearch}>Buscar</button>
     </div>
   );
 }

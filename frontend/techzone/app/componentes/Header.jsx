@@ -5,7 +5,6 @@ import styles from "./Header.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import SearchBar from "./SearchBar";
 
 // //conseguir el id_cliente a apartir del token
 const decodeToken = (token) => {
@@ -105,9 +104,6 @@ export default function Header() {
       <div className={styles.logo} onClick={handleLogoClick}>
         <Image src="/logo.png" alt="Logo" width={100} height={50} />
       </div>
-      
-      {/* Pasamos la función fetchProducts a SearchBar */}
-      <SearchBar onSearch={fetchProducts} />
 
       <nav>
         <ul className={styles.navList}>
@@ -155,22 +151,7 @@ export default function Header() {
         </ul>
       </nav>
 
-      {/* Mostrar los productos filtrados debajo del SearchBar */}
-      <div className="search-results">
-  {productos.length > 0 ? (
-    <ul>
-      {productos.map((product) => (
-        <li key={product.idProducto} className="p-2 border-b">
-          <Link href={`/producto/${product.idProducto}`}>
-            {product.nombre_producto}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <p>No se encontraron productos.</p>
-  )}
-      </div>
+ 
     </header>
   );
 }
