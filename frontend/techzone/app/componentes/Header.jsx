@@ -5,8 +5,9 @@ import styles from "./Header.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import SearchBar from "./SearchBar";
 
-//conseguir el id_cliente a apartir del token
+// //conseguir el id_cliente a apartir del token
 const decodeToken = (token) => {
   try {
     const [header, payload, signature] = token.split('.');
@@ -23,8 +24,9 @@ const decodeToken = (token) => {
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [idCliente, setIdCliente] = useState(null); //para almacenar el id_cliente
+  const [idCliente, setIdCliente] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [productos, setProductos] = useState([]); //para almacenar el id_cliente
   const router = useRouter();
 
   // Función para verificar el estado de autenticación y obtener el id_cliente
@@ -34,22 +36,45 @@ export default function Header() {
     setIsLoggedIn(!!token);
 
     if (token) {
-      const idCliente = decodeToken(token); 
-      setIdCliente(idCliente); 
+      const idCliente = decodeToken(token);
+      setIdCliente(idCliente);
     } else {
       setIdCliente(null); // Si no hay token, limpiar el id_cliente
     }
   };
 
+
+  // Función para buscar productos
+  const fetchProducts = async (query) => {
+    try {
+      const res = await fetch(`http://localhost:3001/productos/search?q=${query}`); // 🔹 URL correcta
+  
+      if (!res.ok) {
+        throw new Error(`Error ${res.status}: ${res.statusText}`);
+      }
+  
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("La API no devolvió JSON.");
+      }
+  
+      const data = await res.json();
+      console.log("Productos encontrados:", data);
+      setProductos(data);
+    } catch (error) {
+      console.error("Error al buscar productos:", error);
+      setProductos([]); // Vaciar productos en caso de error
+    }
+  };
   // Verificar al montar el componente y cada vez que obtenga el foco
   useEffect(() => {
     if (typeof window !== 'undefined') {
       checkAuthStatus();
 
       window.addEventListener('focus', checkAuthStatus);
-      
+
       const interval = setInterval(checkAuthStatus, 2000);
-      
+
       // Configurar oyentes de eventos personalizados
       window.addEventListener('custom-login', checkAuthStatus);
       window.addEventListener('custom-logout', checkAuthStatus);
@@ -75,27 +100,19 @@ export default function Header() {
     router.push('/');
   };
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
-  console.log("Estado de autenticación:", isLoggedIn);
-
   return (
     <header className={styles.header}>
       <div className={styles.logo} onClick={handleLogoClick}>
         <Image src="/logo.png" alt="Logo" width={100} height={50} />
       </div>
+      
+      {/* Pasamos la función fetchProducts a SearchBar */}
+      <SearchBar onSearch={fetchProducts} />
 
       <nav>
         <ul className={styles.navList}>
           <li className={styles.dropdown}>
-            <span 
-              className={styles.dropdownTitle} 
-              onClick={toggleDropdown}
-            >
-              Productos
-            </span>
+            <span className={styles.dropdownTitle}>Productos</span>
             <ul className={`${styles.dropdownMenu} ${dropdownOpen ? styles.visible : ""}`}>
               <li>
                 <Link href="/productos/ordenadores">Ordenadores</Link>
@@ -137,6 +154,23 @@ export default function Header() {
           )}
         </ul>
       </nav>
+
+      {/* Mostrar los productos filtrados debajo del SearchBar */}
+      <div className="search-results">
+  {productos.length > 0 ? (
+    <ul>
+      {productos.map((product) => (
+        <li key={product.idProducto} className="p-2 border-b">
+          <Link href={`/producto/${product.idProducto}`}>
+            {product.nombre_producto}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>No se encontraron productos.</p>
+  )}
+      </div>
     </header>
   );
 }
